@@ -31,11 +31,11 @@ public class Driver{
 		if(success)
 			System.out.println("Login Okay");
 		
-		success = signUp("Maddie Mai","grassonfire@sjsu.edu","friedchicken",4645 );
+		success = signUp("Maddie Mai","grassonfire1@sjsu.edu","friedchicken",4645 );
 		if(success)
 			System.out.println("SignUp Okay");
 		
-		success= updatePassword(100,"Yimin Mei","tyranny@sjsu.edu",44444,"ICANNOTSLEEP");
+		success= updatePassword(1,"Yimin Mei","tyranny@sjsu.edu",44444,"ICANNOTSLEEP");
 		if(success)
 			System.out.println("Update password okay");
 		
