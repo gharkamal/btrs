@@ -5,7 +5,7 @@ import com.mysql.jdbc.jdbc2.optional.MysqlDataSource;
 
 import java.sql.*;
 
-public class main{
+public class Driver{
 	public static Connection connection;
 	
     public static void main(String[] args){
@@ -37,6 +37,7 @@ public class main{
 		success = signUp("Maddie Mai","grassonfire@sjsu.edu","friedchicken",4645 );
 		if(success)
 			System.out.println("SignUp Okay");
+	
 		
 		
 		//----------------------------TESTING------------------------------------------
@@ -72,9 +73,10 @@ public class main{
     		preparedstatement.setString(2, email);
     		preparedstatement.setString(3, password);
     		preparedstatement.setInt(4, creditCard);
-    		boolean hasResults = preparedstatement.execute();
-    		if(hasResults)
+    		int hasChanged = preparedstatement.executeUpdate();
+    		if(hasChanged ==1)
     			return true;
+    		
     	}catch(Exception e){
     		e.printStackTrace();
     		return false;
