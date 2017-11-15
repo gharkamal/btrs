@@ -9,6 +9,7 @@ fullName VARCHAR(50),
 email VARCHAR(30),
 password VARCHAR(30), 
 creditCard INT,
+FOREIGN KEY(email),
 PRIMARY KEY(accountID)
 );
 
