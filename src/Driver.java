@@ -6,6 +6,7 @@ import com.mysql.jdbc.jdbc2.optional.MysqlDataSource;
 import java.sql.*;
 
 public class Driver{
+	
 	public static Connection connection;
     public static void main(String[] args){
     	connection=null;
@@ -18,16 +19,12 @@ public class Driver{
 			mysqlID.setUser(props.getProperty("MYSQL_DB_USERNAME") );
 			mysqlID.setPassword(props.getProperty("MYSQL_DB_PASSWORD"));
 			connection = mysqlID.getConnection();
-			Statement statement = connection.createStatement();
-			statement.execute("USE BTRS;");
 		}catch(SQLException e){
 			e.printStackTrace();
 			return;
 		}catch(Exception e){
 			System.out.println("Failure");
 		}
-		
-		
 		//----------------------------TESTING------------------------------------------
 		
 		boolean success= login("1","lucky321");
@@ -78,7 +75,6 @@ public class Driver{
     		int hasChanged = preparedstatement.executeUpdate();
     		if(hasChanged ==1)
     			return true;
-    		
     	}catch(Exception e){
     		e.printStackTrace();
     		return false;
@@ -90,7 +86,6 @@ public class Driver{
     public static boolean updatePassword(int accountID,String fullName,String email,int creditCard, String newPassword ){
     	PreparedStatement preparedstatement = null;
     	try{
-    		
     		String code = "Update Account_Holder "
     				     +"Set password = ?"
     				     +"where accountID = ? and fullName= ? and creditCard = ? and email=?";
@@ -109,7 +104,6 @@ public class Driver{
     	}
     	return false;
     }
-    
-    
-    
+   
+   
 }
