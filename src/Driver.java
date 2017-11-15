@@ -7,7 +7,6 @@ import java.sql.*;
 
 public class Driver{
 	public static Connection connection;
-	
     public static void main(String[] args){
     	connection=null;
 		try{
@@ -34,11 +33,14 @@ public class Driver{
 		boolean success= login("1","lucky321");
 		if(success)
 			System.out.println("Login Okay");
+		
 		success = signUp("Maddie Mai","grassonfire@sjsu.edu","friedchicken",4645 );
 		if(success)
 			System.out.println("SignUp Okay");
-	
 		
+		success= updatePassword(100,"Yimin Mei","tyranny@sjsu.edu",44444,"ICANNOTSLEEP");
+		if(success)
+			System.out.println("Update password okay");
 		
 		//----------------------------TESTING------------------------------------------
 		
@@ -84,5 +86,30 @@ public class Driver{
     	return false;
     	
     }
-
+    // functional requirement 10
+    public static boolean updatePassword(int accountID,String fullName,String email,int creditCard, String newPassword ){
+    	PreparedStatement preparedstatement = null;
+    	try{
+    		
+    		String code = "Update Account_Holder "
+    				     +"Set password = ?"
+    				     +"where accountID = ? and fullName= ? and creditCard = ? and email=?";
+    		preparedstatement = connection.prepareStatement(code);
+    		preparedstatement.setString(1,newPassword);
+    		preparedstatement.setInt(2,accountID);
+    		preparedstatement.setString(3,fullName);
+    		preparedstatement.setInt(4,creditCard);
+    		preparedstatement.setString(5,email);
+    		int hasChanged = preparedstatement.executeUpdate();
+    		if(hasChanged==1)
+    			return true;
+    	}catch(Exception e){
+    		e.printStackTrace();
+    		return false;
+    	}
+    	return false;
+    }
+    
+    
+    
 }
