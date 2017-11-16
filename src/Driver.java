@@ -82,6 +82,28 @@ public class Driver{
     	return false;
     	
     }
+    // functional requirement 9
+    public static boolean updateAccount(int accountID,String newEmail,int newCreditCard, String password ){
+    	PreparedStatement preparedstatement=null;
+    	try{
+    		String code = "Update Account_Holder "
+    					 +"Set email = ?, creditCard=?"
+    					 +"where accountID = ? password = ?";
+    		preparedstatement = connection.prepareStatement(code);
+    		preparedstatement.setString(1,newEmail);
+    		preparedstatement.setInt(2,newCreditCard);
+    		preparedstatement.setInt(3,accountID);
+    		preparedstatement.setString(4,password);
+    		int hasChanged = preparedstatement.executeUpdate();
+    		if(hasChanged==1)
+    			return true;
+    	}catch(Exception e){
+    		e.printStackTrace();
+    		return false;
+    	}
+    	return false;
+    }
+    
     // functional requirement 10
     public static boolean updatePassword(int accountID,String fullName,String email,int creditCard, String newPassword ){
     	PreparedStatement preparedstatement = null;
