@@ -4,15 +4,15 @@ USE BTRS;
 
 DROP TABLE IF EXISTS Account_Holder; 
 CREATE TABLE Account_Holder(
-accountID INT,
+accountID INT AUTO_INCREMENT,
 fullName VARCHAR(50), 
 email VARCHAR(30),
 password VARCHAR(30), 
 creditCard INT,
-FOREIGN KEY(email),
+UNIQUE KEY(email),
 PRIMARY KEY(accountID)
 );
-
+ALTER TABLE Account_holder AUTO_INCREMENT=0;
 
 DROP TABLE IF EXISTS Passenger;
 CREATE TABLE Passenger(
@@ -64,9 +64,9 @@ accountID INT REFERENCES Account_Holder(accountID) ON UPDATE CASCADE ON DELETE C
 #LOAD DATA LOCAL INFILE './data/account_holders.txt' INTO TABLE Account_Holder;
 #LOAD DATA LOCAL INFILE './data/passengers.txt' INTO TABLE Passenger;
 
-INSERT INTO Account_Holder(accountID,fullName,email,password,creditCard) values(1,'Yimin Mei','tyranny@sjsu.edu','lucky321',44444);
-INSERT INTO Account_Holder(accountID,fullName,email,password,creditCard) values(2,'Tygus Banana','jerk@sjsu.edu','neverlucky989',23512);
-INSERT INTO Account_Holder(accountID,fullName,email,password,creditCard) values(3,'Adobe Chen','estupido@sjsu.edu','ilovechickenjk',12345);
+INSERT INTO Account_Holder(fullName,email,password,creditCard) values('Yimin Mei','tyranny@sjsu.edu','lucky321',44444);
+INSERT INTO Account_Holder(fullName,email,password,creditCard) values('Tygus Banana','jerk@sjsu.edu','neverlucky989',23512);
+INSERT INTO Account_Holder(fullName,email,password,creditCard) values('Adobe Chen','estupido@sjsu.edu','ilovechickenjk',12345);
 
 INSERT INTO Passenger(passengerID,accountID,startStID,endStID,seatID,dateTime,wifi) values(9,1,0,1,47,'1111-11-11',false ); 
 INSERT INTO Passenger(passengerID,accountID,startStID,endStID,seatID,dateTime,wifi) values(8,2,0,1,46,'1111-11-11',false ); 
