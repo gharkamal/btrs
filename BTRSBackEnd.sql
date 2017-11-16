@@ -61,14 +61,11 @@ accountID INT REFERENCES Account_Holder(accountID) ON UPDATE CASCADE ON DELETE C
 );
 
 
-#LOAD DATA LOCAL INFILE './data/account_holders.txt' INTO TABLE Account_Holder;
-#LOAD DATA LOCAL INFILE './data/passengers.txt' INTO TABLE Passenger;
+LOAD DATA LOCAL INFILE './data/account_holders.txt' INTO TABLE Account_Holder(fullName,email,password,creditCard);
+#LOAD DATA LOCAL INFILE './data/passengers.txt' INTO TABLE Passenger(accountID,startStID,endStID,seatID,dateTime,wifi);
+#LOAD DATA LOCAL INFILE './data/trains.txt' INTO TABLE Train(trainID,deptTime,isFull);
+#LOAD DATA LOCAL INFILE './data/stations.txt' INTO TABLE Station(stationID,name,orderNumber);
+#LOAD DATA LOCAL INFILE './data/cars.txt' INTO TABLE Car(carNumber,seatID,trainID);
+#LOAD DATA LOCAL INFILE './data/banneds.txt' INTO TABLE Banned(accountID);
 
-INSERT INTO Account_Holder(fullName,email,password,creditCard) values('Yimin Mei','tyranny@sjsu.edu','lucky321',44444);
-INSERT INTO Account_Holder(fullName,email,password,creditCard) values('Tygus Banana','jerk@sjsu.edu','neverlucky989',23512);
-INSERT INTO Account_Holder(fullName,email,password,creditCard) values('Adobe Chen','estupido@sjsu.edu','ilovechickenjk',12345);
-
-INSERT INTO Passenger(passengerID,accountID,startStID,endStID,seatID,dateTime,wifi) values(9,1,0,1,47,'1111-11-11',false ); 
-INSERT INTO Passenger(passengerID,accountID,startStID,endStID,seatID,dateTime,wifi) values(8,2,0,1,46,'1111-11-11',false ); 
-INSERT INTO Passenger(passengerID,accountID,startStID,endStID,seatID,dateTime,wifi) values(7,3,0,1,45,'1111-11-11',false ); 
 
