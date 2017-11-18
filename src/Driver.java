@@ -131,15 +131,14 @@ public class Driver{
     }
     
     //Functional Requirment 11
-    public static boolean banCustomer(int accountID, String fullName) {
+    public static boolean banCustomer(int accountID) {
     		PreparedStatement preparedstatement= null;
     		
     		try {
-    			String code = "INSERT INTO Banned(accountID, fullName) values(?,?) "
+    			String code = "INSERT INTO Banned(accountID) values(?) "
     					+ "where accountID in (select accountID from Account_Holder)";
     			preparedstatement=connection.prepareStatement(code);
         		preparedstatement.setInt(1, accountID);
-        		preparedstatement.setString(2, fullName);
         		int hasChanged = preparedstatement.executeUpdate();
         		if(hasChanged ==1)
         			return true;
@@ -195,5 +194,42 @@ public class Driver{
     		}
     		return false;
     }
-   
+    
+    //functional requirement 14: remove ban
+    public static boolean removeBan(int accountID) {
+    		PreparedStatement preparedstatement= null;
+    		try {
+    			String code = "DELETE FROM Banned where accountID = ?";
+    			preparedstatement = connection.prepareStatement(code);
+    			preparedstatement.setInt(1, accountID);
+    			int hasChanged = preparedstatement.executeUpdate();
+    			if(hasChanged ==1)
+        			return true;
+    			
+    		}catch(Exception e) {
+    			e.printStackTrace();
+    			return false;
+    		}
+    		return false;
+    }
+    
+    //Functional Requirment 15: Sign   up   for   Wifi
+    public static boolean wifiUpdate(int accountID, boolean wifi  )
+    {
+    	PreparedStatement preparedstatement= null;
+		try {
+			String code = "UPDATE Account_Holder set wifi = ? where accountID = ? ";
+			preparedstatement = connection.prepareStatement(code);
+			preparedstatement.setBoolean(1, wifi);
+			preparedstatement.setInt(2, accountID);
+			int hasChanged = preparedstatement.executeUpdate();
+			if(hasChanged ==1)
+    			return true;
+			
+		}catch(Exception e) {
+			e.printStackTrace();
+			return false;
+		}
+		return false;
+    }
 }
