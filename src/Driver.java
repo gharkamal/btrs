@@ -83,27 +83,6 @@ public class Driver{
     	
     }
     
-    //Functional Requirment 11
-    public static boolean banCustomer(int accountID, String fullName) {
-    		PreparedStatement preparedstatement= null;
-    		
-    		try {
-    			String code = "INSERT INTO Banned(accountID, fullName) values(?,?) "
-    					+ "where accountID in (select accountID from Account_Holder";
-    			preparedstatement=connection.prepareStatement(code);
-        		preparedstatement.setInt(1, accountID);
-        		preparedstatement.setString(2, fullName);
-        		int hasChanged = preparedstatement.executeUpdate();
-        		if(hasChanged ==1)
-        			return true;
-    			
- 		}catch(Exception e){
- 			e.printStackTrace();
- 			return false;
- 		}
- 		return false;
-    	
-    }
     
     
     // functional requirement 9
@@ -151,8 +130,49 @@ public class Driver{
     	return false;
     }
     
+    //Functional Requirment 11
+    public static boolean banCustomer(int accountID, String fullName) {
+    		PreparedStatement preparedstatement= null;
+    		
+    		try {
+    			String code = "INSERT INTO Banned(accountID, fullName) values(?,?) "
+    					+ "where accountID in (select accountID from Account_Holder)";
+    			preparedstatement=connection.prepareStatement(code);
+        		preparedstatement.setInt(1, accountID);
+        		preparedstatement.setString(2, fullName);
+        		int hasChanged = preparedstatement.executeUpdate();
+        		if(hasChanged ==1)
+        			return true;
+    			
+ 		}catch(Exception e){
+ 			e.printStackTrace();
+ 			return false;
+ 		}
+ 		return false;
+    	
+    }
     
-    
+    //Functional Requirement 12: add a train
+    public static boolean addTrain(int trainID, String deptDateTime, boolean isFull)
+    {
+    		PreparedStatement preparedstatement= null;
+    		try {
+    			String code = "INSERT INTO Train(trainID, deptDateTime, isFull) values(?,?,?)"
+    					+ " where trainID not in (select trainID from Train)";
+    			preparedstatement = connection.prepareStatement(code);
+    			preparedstatement.setInt(1, trainID);
+    			preparedstatement.setString(2, deptDateTime);
+    			preparedstatement.setBoolean(3, isFull);
+    			int hasChanged = preparedstatement.executeUpdate();
+        		if(hasChanged ==1)
+        			return true;
+        		
+    		}catch(Exception e) {
+    			e.printStackTrace();
+    			return false;
+    		}
+    		return false;
+    }
    
    
 }
