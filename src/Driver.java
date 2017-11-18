@@ -173,6 +173,27 @@ public class Driver{
     		}
     		return false;
     }
-   
+    
+    //Functional Requirement 13: Adding station: Add a new station.
+    public static boolean addStation(int stationID, String name, int order)
+    {
+    		PreparedStatement preparedstatement= null;
+    		try {
+    			String code = "INSERT INTO Station(stationID, name, order) values(?,?,?)"
+    					+ " where stationID not in (select stationID from Station)";
+    			preparedstatement = connection.prepareStatement(code);
+    			preparedstatement.setInt(1, stationID);
+    			preparedstatement.setString(2, name);
+    			preparedstatement.setInt(3, order);
+    			int hasChanged = preparedstatement.executeUpdate();
+        		if(hasChanged ==1)
+        			return true;
+        		
+    		}catch(Exception e) {
+    			e.printStackTrace();
+    			return false;
+    		}
+    		return false;
+    }
    
 }
