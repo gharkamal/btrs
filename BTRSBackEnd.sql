@@ -29,20 +29,23 @@ PRIMARY KEY(passengerID)
 
 DROP TABLE IF EXISTS Train;
 CREATE TABLE Train(
-trainID INT PRIMARY KEY,
+trainID INT PRIMARY KEY AUTO_INCREMENT,
 deptTime TIME,
-isFull BOOL
-);
+isFull BOOL DEFAULT FALSE
+) AUTO_INCREMENT = 100;
 
 
 DROP TABLE IF EXISTS Station;
 CREATE TABLE Station(
-stationID INT PRIMARY KEY,
+stationID INT PRIMARY KEY AUTO_INCREMENT,
 name VARCHAR(64),
 orderNumber INT
-);
+) AUTO_INCREMENT = 1000;
 
 
+# Cars, I believe are initially empty.
+# When a row is added to "Passenger", the corresponding Trigger..
+# ..will add rows to this relation.
 DROP TABLE IF EXISTS Car;
 CREATE TABLE Car(
 carNumber INT,
@@ -63,8 +66,8 @@ accountID INT REFERENCES Account_Holder(accountID) ON UPDATE CASCADE ON DELETE C
 
 LOAD DATA LOCAL INFILE './data/account_holders.txt' INTO TABLE Account_Holder(fullName,email,password,creditCard);
 #LOAD DATA LOCAL INFILE './data/passengers.txt' INTO TABLE Passenger(accountID,startStID,endStID,seatID,dateTime,wifi);
-#LOAD DATA LOCAL INFILE './data/trains.txt' INTO TABLE Train(trainID,deptTime,isFull);
-#LOAD DATA LOCAL INFILE './data/stations.txt' INTO TABLE Station(stationID,name,orderNumber);
+LOAD DATA LOCAL INFILE './data/trains.txt' INTO TABLE Train(deptTime);
+LOAD DATA LOCAL INFILE './data/stations.txt' INTO TABLE Station(name,orderNumber);
 #LOAD DATA LOCAL INFILE './data/cars.txt' INTO TABLE Car(carNumber,seatID,trainID);
 #LOAD DATA LOCAL INFILE './data/banneds.txt' INTO TABLE Banned(accountID);
 

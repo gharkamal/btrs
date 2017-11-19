@@ -1,0 +1,14 @@
+San Francisco	0
+San Francisco International Airport	1
+Palo Alto	2
+San Jose Diridon	3
+Gilroy	4
+Fresno	5
+Bakersfield	6
+Palmdale	7
+Sylmar	8
+Burbank	9
+Los Angeles Union	10
+Norwalk	11
+Anaheim	12
+Irvine	13
