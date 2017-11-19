@@ -86,7 +86,29 @@ public class Driver{
     //functional requirement 3 : Reserve train destination: Sign up for a trip.
     public static boolean reserveTrip(int accountID, int startStdID, int endStID, int seatID, int dateTime)
     {
-        String code = ""
+        String code = "INSERT INTO Passenger values(?,?,?,?,?,?)";
+        preparedstatement=connection.prepareStatement(code);
+            preparedstatement.setInt(1, accountID);
+            preparedstatement.setInt(2, startStdID);
+            preparedstatement.setInt(3, endStID);
+            preparedstatement.setInt(4, seatID);
+             preparedstatement.setInt(5, dateTime);
+            preparedstatement.setBoolean(6, false);
+            int hasChanged = preparedstatement.executeUpdate();
+            if(hasChanged ==1)
+                return true;
+        }catch(Exception e){
+            e.printStackTrace();
+            return false;
+        }
+        return false;
+        
+    }
+
+    //functional requirment 4: Change/update train destination: Update a trip destination.
+    public static boolean updateTrip(int accountID, int startStdID, int endStID, int seatID, int dateTime)
+    {
+        return false;
     }
     
     
@@ -142,9 +164,10 @@ public class Driver{
     		
     		try {
     			String code = "INSERT INTO Banned(accountID) values(?) "
-    					+ "where accountID in (select accountID from Account_Holder)";
+    					+ "where ? in (select accountID from Account_Holder)";
     			preparedstatement=connection.prepareStatement(code);
         		preparedstatement.setInt(1, accountID);
+                preparedstatement.setInt(2, accountID);
         		int hasChanged = preparedstatement.executeUpdate();
         		if(hasChanged ==1)
         			return true;
