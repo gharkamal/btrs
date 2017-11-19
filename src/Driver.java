@@ -108,8 +108,26 @@ public class Driver{
     //functional requirment 4: Change/update train destination: Update a trip destination.
     public static boolean updateTrip(int accountID, int startStdID, int endStID, int seatID, int dateTime)
     {
+         String code = "UPDATE Passenger set startStdID = ?, endStID = ?, seatID = ?, dateTime = ?"
+                         + "WHERE accountID = ?";
+        preparedstatement=connection.prepareStatement(code);
+            preparedstatement.setInt(1, accountID);
+            preparedstatement.setInt(2, startStdID);
+            preparedstatement.setInt(3, endStID);
+            preparedstatement.setInt(4, seatID);
+             preparedstatement.setInt(5, dateTime);
+            preparedstatement.setInt(6, accountID);
+            int hasChanged = preparedstatement.executeUpdate();
+            if(hasChanged ==1)
+                return true;
+        }catch(Exception e){
+            e.printStackTrace();
+            return false;
+        }
         return false;
     }
+
+    //
     
     
     
