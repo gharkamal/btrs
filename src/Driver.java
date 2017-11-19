@@ -82,6 +82,12 @@ public class Driver{
     	return false;
     	
     }
+
+    //functional requirement 3 : Reserve train destination: Sign up for a trip.
+    public static boolean reserveTrip(int accountID, int startStdID, int endStID, int seatID, int dateTime)
+    {
+        String code = ""
+    }
     
     
     
