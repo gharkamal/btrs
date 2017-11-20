@@ -1,9 +1,8 @@
 import java.io.FileInputStream;
 import java.util.Properties;
-
 import com.mysql.jdbc.jdbc2.optional.MysqlDataSource;
-
 import java.sql.*;
+import java.util.Scanner;
 
 public class Driver{
 	
@@ -26,20 +25,77 @@ public class Driver{
 			System.out.println("Failure");
 		}
 		//----------------------------TESTING------------------------------------------
+		boolean run= true;
+		Scanner sc = new Scanner(System.in);
+		System.out.println("-----Welcome to the BTRS Console-----");
+		System.out.println("Enter the opcode and the respective inputs:");
+		System.out.println("   1 <accountID> <password>                                        // Login");
+		System.out.println("   2 <fullName> <email> <password> <creditCard>                    // Sign up");
+		System.out.println("   3 <accountID> <startStdID> <endStID> <seatID> <dateTime>        // Reserve trip");
+		System.out.println("   4 <accountID> <startStdID> <endStID> <seatID> <dateTime>        // Change trip destination");
+		System.out.println("   9 <accountID> <newEmail> <newCreditCard> <password>             // Update user information");
+		System.out.println("   10 <accountID> <fullName> <email> <creditCard> <newPassword>    // Update new password");
+		System.out.println("   11 <accountID>                                                  // Ban accountID");
+		System.out.println("   12 <trainID> <deptDateTime> <isFull>                            // Add new train");
+		System.out.println("   13 <stationID> <name> <order>                                   // Add new station");
+		System.out.println("   14 <accountID>                                                  // Remove ban");
+		System.out.println("   15 <accountID> <wifi>                                           // Update wifi");
+		System.out.println("   16 Quit");
 		
-		boolean success= login("1","lucky321");
-		if(success)
-			System.out.println("Login Okay");
+		while(run){
+			try{
+				int opcode = sc.nextInt();
+				switch(opcode){
+					case 1:
+						break;
+					case 2:
+						break;
+					case 3:
+						break;
+					case 4:
+						break;
+					case 5:
+						break;
+					case 6:
+						break;
+					case 7:
+						break;
+					case 8:
+						break;
+					case 9:
+						break;
+					case 10:
+						break;
+					case 11:
+						break;
+					case 12:
+						break;
+					case 13:
+						break;
+					case 14:
+						break;
+					case 15:
+						break;
+					case 16:
+						System.out.println("-----Okay Bye!-----");
+						run=false;
+						break;
+					default:
+					System.out.println("-----Not a valid opcode!-----");
+				}
+				
+			}catch(Exception e){
+				System.out.println("-----Not a valid command!-----");	
+			}
+		}
+		sc.close();
 		
-		success = signUp("Maddie Mai","grassonfire1@sjsu.edu","friedchicken",4645 );
-		if(success)
-			System.out.println("SignUp Okay");
-		
-		success= updatePassword(1,"Yimin Mei","tyranny@sjsu.edu",44444,"ICANNOTSLEEP");
-		if(success)
-			System.out.println("Update password okay");
-		
-		//----------------------------TESTING------------------------------------------
+		try{
+			connection.close();
+		}catch(Exception e){
+			
+		}
+		System.exit(0);
 		
     }
     // Functional requirement 1
@@ -84,7 +140,7 @@ public class Driver{
     }
 
     //Functional requirement 3 : Reserve train destination: Sign up for a trip.
-    public static boolean reserveTrip(int accountID, int startStdID, int endStID, int seatID, int dateTime)
+    public static boolean reserveTrip(int accountID, int startStdID, int endStID, int seatID, String dateTime)
     {
     	PreparedStatement preparedstatement=null;
     	try{
@@ -94,7 +150,7 @@ public class Driver{
             preparedstatement.setInt(2, startStdID);
             preparedstatement.setInt(3, endStID);
             preparedstatement.setInt(4, seatID);
-            preparedstatement.setInt(5, dateTime);
+            preparedstatement.setString(5, dateTime);
             preparedstatement.setBoolean(6, false);
             int hasChanged = preparedstatement.executeUpdate();
             if(hasChanged ==1)
@@ -107,8 +163,8 @@ public class Driver{
         
     }
 
-    //Functional requirment 4: Change/update train destination: Update a trip destination.
-    public static boolean updateTrip(int accountID, int startStdID, int endStID, int seatID, int dateTime)
+    //Functional requirement 4: Change/update train destination: Update a trip destination.
+    public static boolean updateTrip(int accountID, int startStdID, int endStID, int seatID, String dateTime)
     {
     	PreparedStatement preparedstatement=null;
     	try{
@@ -119,7 +175,7 @@ public class Driver{
             preparedstatement.setInt(2, startStdID);
             preparedstatement.setInt(3, endStID);
             preparedstatement.setInt(4, seatID);
-            preparedstatement.setInt(5, dateTime);
+            preparedstatement.setString(5, dateTime);
             preparedstatement.setInt(6, accountID);
             int hasChanged = preparedstatement.executeUpdate();
             if(hasChanged ==1)
@@ -131,9 +187,6 @@ public class Driver{
         return false;
     }
 
-    
-    
-    
     // Functional requirement 9
     public static boolean updateAccount(int accountID,String newEmail,int newCreditCard, String password ){
     	PreparedStatement preparedstatement=null;
@@ -179,7 +232,7 @@ public class Driver{
     	return false;
     }
     
-    //Functional Requirment 11
+    //Functional Requirement 11
     public static boolean banCustomer(int accountID) {
     		PreparedStatement preparedstatement= null;
     		
@@ -263,7 +316,7 @@ public class Driver{
     		return false;
     }
     
-    //Functional Requirement 15: Sign   up   for   Wifi
+    //Functional Requirement 15: Sign up for Wifi
     public static boolean wifiUpdate(int accountID, boolean wifi )
     {
     	PreparedStatement preparedstatement= null;
