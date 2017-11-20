@@ -42,7 +42,7 @@ public class Driver{
 		//----------------------------TESTING------------------------------------------
 		
     }
-    // functional requirement 1
+    // Functional requirement 1
     public static boolean login(String accountID,String password){
     	Statement statement = null;
     	try{
@@ -61,7 +61,7 @@ public class Driver{
     	}
     	return false;
     }
-    // functional requirement 2
+    // Functional requirement 2
     public static boolean signUp(String fullName,String email,String password,int creditCard ){
     	PreparedStatement preparedstatement=null;
     	try{
@@ -83,16 +83,18 @@ public class Driver{
     	
     }
 
-    //functional requirement 3 : Reserve train destination: Sign up for a trip.
+    //Functional requirement 3 : Reserve train destination: Sign up for a trip.
     public static boolean reserveTrip(int accountID, int startStdID, int endStID, int seatID, int dateTime)
     {
+    	PreparedStatement preparedstatement=null;
+    	try{
         String code = "INSERT INTO Passenger values(?,?,?,?,?,?)";
-        preparedstatement=connection.prepareStatement(code);
+        	preparedstatement=connection.prepareStatement(code);
             preparedstatement.setInt(1, accountID);
             preparedstatement.setInt(2, startStdID);
             preparedstatement.setInt(3, endStID);
             preparedstatement.setInt(4, seatID);
-             preparedstatement.setInt(5, dateTime);
+            preparedstatement.setInt(5, dateTime);
             preparedstatement.setBoolean(6, false);
             int hasChanged = preparedstatement.executeUpdate();
             if(hasChanged ==1)
@@ -105,17 +107,19 @@ public class Driver{
         
     }
 
-    //functional requirment 4: Change/update train destination: Update a trip destination.
+    //Functional requirment 4: Change/update train destination: Update a trip destination.
     public static boolean updateTrip(int accountID, int startStdID, int endStID, int seatID, int dateTime)
     {
-         String code = "UPDATE Passenger set startStdID = ?, endStID = ?, seatID = ?, dateTime = ?"
+    	PreparedStatement preparedstatement=null;
+    	try{
+         	String code = "UPDATE Passenger set startStdID = ?, endStID = ?, seatID = ?, dateTime = ?"
                          + "WHERE accountID = ?";
-        preparedstatement=connection.prepareStatement(code);
+         	preparedstatement=connection.prepareStatement(code);
             preparedstatement.setInt(1, accountID);
             preparedstatement.setInt(2, startStdID);
             preparedstatement.setInt(3, endStID);
             preparedstatement.setInt(4, seatID);
-             preparedstatement.setInt(5, dateTime);
+            preparedstatement.setInt(5, dateTime);
             preparedstatement.setInt(6, accountID);
             int hasChanged = preparedstatement.executeUpdate();
             if(hasChanged ==1)
@@ -127,11 +131,10 @@ public class Driver{
         return false;
     }
 
-    //
     
     
     
-    // functional requirement 9
+    // Functional requirement 9
     public static boolean updateAccount(int accountID,String newEmail,int newCreditCard, String password ){
     	PreparedStatement preparedstatement=null;
     	try{
@@ -153,7 +156,7 @@ public class Driver{
     	return false;
     }
     
-    // functional requirement 10
+    // Functional requirement 10
     public static boolean updatePassword(int accountID,String fullName,String email,int creditCard, String newPassword ){
     	PreparedStatement preparedstatement = null;
     	try{
@@ -260,8 +263,8 @@ public class Driver{
     		return false;
     }
     
-    //Functional Requirment 15: Sign   up   for   Wifi
-    public static boolean wifiUpdate(int accountID, boolean wifi  )
+    //Functional Requirement 15: Sign   up   for   Wifi
+    public static boolean wifiUpdate(int accountID, boolean wifi )
     {
     	PreparedStatement preparedstatement= null;
 		try {
@@ -279,4 +282,7 @@ public class Driver{
 		}
 		return false;
     }
+    
+    
+    
 }
