@@ -22,7 +22,7 @@ def execute():
         file = open(things[0],"r")
         for line in file:
             email = createRandEmail(line.split())
-            password = sha256("{0}{1}".format(line,email).encode("utf-8")).hexdigest()[:30]
+            password = sha256("{0}{1}".format(line,email).encode("utf-8")).hexdigest()[:6]
             resultStr += "{0}\t{1}\t{2}\t{3}\n".format(line.replace('\n',''), email, password, random.choice(range(10000,100000)))
         file.close()
     except IOError:

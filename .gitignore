@@ -5,3 +5,4 @@ btrs.iml
 .DS_STORE
 db.properties
 bin/
+mysql-connector-java-5.1.44/
