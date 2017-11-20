@@ -22,7 +22,6 @@ wifi boolean,
 PRIMARY KEY(passengerID)
 ) AUTO_INCREMENT = 500;
 
-
 DROP TABLE IF EXISTS Train;
 CREATE TABLE Train(
 trainID INT PRIMARY KEY AUTO_INCREMENT,
@@ -56,8 +55,10 @@ FOREIGN KEY(passengerID) REFERENCES Passenger(passengerID) ON UPDATE CASCADE ON 
 
 DROP TABLE IF EXISTS Banned; 
 CREATE TABLE Banned(
-accountID INT REFERENCES Account_Holder(accountID) ON UPDATE CASCADE ON DELETE CASCADE
+accountID INT REFERENCES Account_Holder(accountID) ON UPDATE CASCADE ON DELETE CASCADE,
+PRIMARY KEY(accountID)
 );
+
 
 # Thrown when invalid seat number and/or car number is input.
 DROP TRIGGER IF EXISTS InsertCarTrigger;
@@ -75,6 +76,24 @@ CREATE TRIGGER InsertCarTrigger
 //
 DELIMITER ;
 
+
+DROP PROCEDURE IF EXISTS archivePassengers;
+DELIMITER //
+CREATE PROCEDURE archivePassengers(IN Passenger
+last date)
+BEGIN
+   INSERT INTO archive(passengerID, accountID, startStID ,endStID ,seatID, dateTime, wifi)
+   Select passengerID, accountID, startStID ,endStID ,seatID, dateTime, wifi from Passenger where dateTime <= last;
+   Delete from Passenger where updatedAt <= last;
+END//
+DELIMITER ;
+
+
+#if a person is passenger and they are banned they will be removed
+CREATE Trigger Passenger
+After insert on Banned 
+for each row
+delete from Passenger where old.accountID = accountID;
 
 LOAD DATA LOCAL INFILE './data/account_holders.txt' INTO TABLE Account_Holder(fullName,email,password,creditCard);
 LOAD DATA LOCAL INFILE './data/passengers.txt' INTO TABLE Passenger(accountID,wifi);
