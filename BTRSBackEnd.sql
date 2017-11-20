@@ -89,8 +89,7 @@ CREATE TRIGGER InsertCarTrigger
   BEFORE INSERT ON Car
   FOR EACH ROW
   BEGIN
-    IF NOT (SUBSTRING(NEW.seatID, -1) REGEXP '[A-D]'
-       AND SUBSTRING(NEW.seatID FROM 1 FOR LENGTH(NEW.seatID) - 1) BETWEEN 1 AND 14
+    IF NOT (NEW.seatID REGEXP '^([1-9]|10|11|12|13|14)[A-D]$' # Not very nice regex because of posix style..
        AND NEW.carNumber BETWEEN 0 AND 3) THEN
       SIGNAL SQLSTATE '45000' SET MESSAGE_TEXT = 'Invalid seat/car number!';
     END IF;
