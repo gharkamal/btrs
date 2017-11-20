@@ -66,14 +66,12 @@ PRIMARY KEY(accountID)
 
 DROP PROCEDURE IF EXISTS archivePassengers;
 DELIMITER //
-CREATE PROCEDURE archivePassengers(IN Passenger
-last date)
+CREATE PROCEDURE archivePassengers(IN last date)
 BEGIN
    INSERT INTO archive(passengerID, accountID, startStID ,endStID ,seatID, dateTime, wifi)
    Select passengerID, accountID, startStID ,endStID ,seatID, dateTime, wifi from Passenger where dateTime <= last;
    Delete from Passenger where updatedAt <= last;
 END//
-DELIMITER ;
 
 #if a person is passenger and they are banned they will be removed
 DROP Trigger if exists Passenger;
