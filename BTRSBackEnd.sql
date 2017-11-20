@@ -70,7 +70,7 @@ last date)
 BEGIN
    INSERT INTO archive(passengerID, accountID, startStID ,endStID ,seatID, dateTime, wifi)
    Select passengerID, accountID, startStID ,endStID ,seatID, dateTime, wifi from Passenger where dateTime <= last;
-   Delete from Reservations where updatedAt <= last;
+   Delete from Passenger where updatedAt <= last;
 END//
 DELIMITER ;
 
