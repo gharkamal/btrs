@@ -76,10 +76,27 @@ END//
 DELIMITER ;
 
 #if a person is passenger and they are banned they will be removed
+DROP Trigger if exists Passenger;
 CREATE Trigger Passenger
 After insert on Banned 
 for each row
 delete from Passenger where old.accountID = accountID;
+
+DROP TRIGGER IF EXISTS InsertCarTrigger;
+DELIMITER //
+CREATE TRIGGER InsertCarTrigger
+  BEFORE INSERT ON Car
+  FOR EACH ROW
+  BEGIN
+    IF NOT (SUBSTRING(NEW.seatID, -1) REGEXP '[A-D]'
+       AND SUBSTRING(NEW.seatID FROM 1 FOR LENGTH(NEW.seatID) - 1) BETWEEN 1 AND 14
+       AND NEW.carNumber BETWEEN 0 AND 3) THEN
+      SIGNAL SQLSTATE '45000' SET MESSAGE_TEXT = 'Invalid seat/car number!';
+    END IF;
+  END;
+//
+DELIMITER ;
+
 
 
 LOAD DATA LOCAL INFILE './data/account_holders.txt' INTO TABLE Account_Holder(fullName,email,password,creditCard);
