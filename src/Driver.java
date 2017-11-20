@@ -97,6 +97,13 @@ public class Driver{
 					case 6:
 						break;
 					case 7:
+						int accountID7=Integer.parseInt(sc.next());
+						int newseat7 = Integer.parseInt(sc.next());
+						boolean success7 = changeSeat(accountID7,newseat7);
+						if(success7)
+							System.out.println("-----Update Seat Successful!-----");
+						else 
+							System.out.println("-----Update Seat Failed!-----");
 						break;
 					case 8:
 						break;
@@ -262,13 +269,13 @@ public class Driver{
     	PreparedStatement preparedstatement=null;
     	try{
          	String code = "UPDATE Passenger "
-         			     + "SET startStID = ?, endStID = ?, seatID = ?, dateTime = ?"
+         			     + "SET startStID = ?, endStID = ?, dateTime = ?,seatID = ? \n"
                          +"WHERE accountID = ?";
          	preparedstatement=connection.prepareStatement(code);
             preparedstatement.setInt(1, startStID );
             preparedstatement.setInt(2, endStID);
-            preparedstatement.setInt(3, seatID);
-            preparedstatement.setString(4, dateTime);
+            preparedstatement.setString(3, dateTime);
+            preparedstatement.setInt(4, seatID);
             preparedstatement.setInt(5, accountID);
             int hasChanged = preparedstatement.executeUpdate();
             if(hasChanged ==1)
@@ -283,18 +290,18 @@ public class Driver{
       //Functional Requirment 5: Change train time: Update a trip time.
     
 
-    //Requirment 7 : Change   seat:   Update   a   trip   seat.
-    public static boolean changeSeat(int accountID, int currentSeatID, int updateSeat){
+    //Requirement 7 : Change   seat:   Update   a   trip   seat.
+    public static boolean changeSeat(int accountID, int updateSeat){
         PreparedStatement preparedstatement=null;
         try{
             String code = "UPDATE Passenger "
-                         +"SET seatID = ?"
+                         +"SET seatID = ?  "
                          +"WHERE accountID = ? ";
             preparedstatement = connection.prepareStatement(code);
             preparedstatement.setInt(1,updateSeat);
             preparedstatement.setInt(2,accountID);
             int hasChanged = preparedstatement.executeUpdate();
-            if(hasChanged==1)
+            if(hasChanged>0)
                 return true;
         }catch(Exception e){
             e.printStackTrace();
