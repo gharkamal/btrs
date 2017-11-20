@@ -24,7 +24,7 @@ public class Driver{
 		}catch(Exception e){
 			System.out.println("Failure");
 		}
-		//----------------------------TESTING------------------------------------------
+		//----------------------------Console------------------------------------------
 		boolean run= true;
 		Scanner sc = new Scanner(System.in);
 		System.out.println("-----Welcome to the BTRS Console-----");
@@ -47,12 +47,48 @@ public class Driver{
 				int opcode = sc.nextInt();
 				switch(opcode){
 					case 1:
+						int accountID1= sc.nextInt();
+						String password1 = sc.next();
+						boolean success1= login(accountID1,password1);
+						if(success1)
+							System.out.println("-----Login Successful!-----");
+						else 
+							System.out.println("-----Login Failed!-----");
 						break;
 					case 2:
+						String fullName2=sc.next();
+						String email2 = sc.next();
+						String password2=sc.next();
+						int creditCard2= sc.nextInt();
+						boolean success2 = signUp(fullName2,email2,password2,creditCard2);
+						if(success2)
+							System.out.println("-----Sign Up Successful!-----");
+						else 
+							System.out.println("-----Sign Up Failed!-----");
 						break;
 					case 3:
+						int accountID3= sc.nextInt();
+						int startstdID3 =sc.nextInt();
+						int endstID3=sc.nextInt();
+						int seatID3 = sc.nextInt();
+						String dateTime3= sc.next();
+						boolean success3 = reserveTrip(accountID3,startstdID3,endstID3,seatID3,dateTime3);
+						if(success3)
+							System.out.println("-----Reserve Successful!-----");
+						else 
+							System.out.println("-----Reserve Failed!-----");
 						break;
 					case 4:
+						int accountID4= sc.nextInt();
+						int startstdID4 =sc.nextInt();
+						int endstID4=sc.nextInt();
+						int seatID4 = sc.nextInt();
+						String dateTime4= sc.next();
+						boolean success4 = updateTrip(accountID4,startstdID4,endstID4,seatID4,dateTime4);
+						if(success4)
+							System.out.println("-----Update Reserve Successful!-----");
+						else 
+							System.out.println("-----Update Reserve Failed!-----");
 						break;
 					case 5:
 						break;
@@ -63,31 +99,87 @@ public class Driver{
 					case 8:
 						break;
 					case 9:
+						int accountID9=sc.nextInt();
+						String email9 = sc.next();
+						int creditcard9 = sc.nextInt();
+						String password9 = sc.next();
+						boolean success9 = updateAccount(accountID9,email9,creditcard9,password9);
+						if(success9)
+							System.out.println("-----Update Account Successful!-----");
+						else 
+							System.out.println("-----Update Account Failed!-----");
 						break;
 					case 10:
+						int accountID10 = sc.nextInt();
+						String fullName10 = sc.next();
+						String email10 = sc.next();
+						int creditCard10 = sc.nextInt();
+						String newpassword10 = sc.next();
+						boolean success10 = updatePassword(accountID10,fullName10,email10,creditCard10,newpassword10);
+						if(success10)
+							System.out.println("-----Update Password Successful!-----");
+						else 
+							System.out.println("-----Update Password Failed!-----");
 						break;
 					case 11:
+						int accountID11=  sc.nextInt();
+						boolean success11 = banCustomer(accountID11);
+						if(success11)
+							System.out.println("-----Ban Successful!-----");
+						else 
+							System.out.println("-----Ban Failed!-----");
 						break;
 					case 12:
+						int trainID12 = sc.nextInt();
+						String deptTime12 = sc.next();
+						boolean isfull12 = sc.nextBoolean();
+						boolean success12 = addTrain(trainID12,deptTime12,isfull12);
+						if(success12)
+							System.out.println("-----Add Train Successful!-----");
+						else 
+							System.out.println("-----Add Train Failed!-----");
 						break;
 					case 13:
+						int trainID13 = sc.nextInt();
+						String name13 = sc.next();
+						int order13 = sc.nextInt();
+						boolean success13 = addStation(trainID13, name13,order13);
+						if(success13)
+							System.out.println("-----Add Station Successful!-----");
+						else 
+							System.out.println("-----Add Station Failed!-----");
 						break;
 					case 14:
+						int accountID14 = sc.nextInt();
+						boolean success14 = removeBan(accountID14);
+						if(success14)
+							System.out.println("-----Remove Ban Successful!-----");
+						else 
+							System.out.println("-----Remove Ban Failed!-----");
 						break;
 					case 15:
+						int accountID15 = sc.nextInt();
+						boolean wifi=sc.nextBoolean();
+						boolean success15 =wifiUpdate(accountID15,wifi);
+						if(success15)
+							System.out.println("-----Update WIFI Successful!-----");
+						else 
+							System.out.println("-----Update WIFI Failed!-----");
 						break;
 					case 16:
-						System.out.println("-----Okay Bye!-----");
+						System.out.println("-----Bye!-----");
 						run=false;
 						break;
 					default:
-					System.out.println("-----Not a valid opcode!-----");
+					System.out.println("-----Not a Valid Opcode!-----");
 				}
 				
 			}catch(Exception e){
-				System.out.println("-----Not a valid command!-----");	
+				System.out.println("-----Not a Valid Command!-----");	
 			}
 		}
+		
+		//--------------------Console-----------------------------------------------
 		sc.close();
 		
 		try{
@@ -99,7 +191,7 @@ public class Driver{
 		
     }
     // Functional requirement 1
-    public static boolean login(String accountID,String password){
+    public static boolean login(int accountID,String password){
     	Statement statement = null;
     	try{
     		statement = connection.createStatement();
