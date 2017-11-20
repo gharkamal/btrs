@@ -41,13 +41,15 @@ public class Driver{
 		System.out.println("   14 <accountID>                                                  // Remove ban");
 		System.out.println("   15 <accountID> <wifi>                                           // Update wifi");
 		System.out.println("   16 Quit");
-		
+		int opcode=0;
+	
 		while(run){
+			System.out.print("Input: ");	
 			try{
-				int opcode = sc.nextInt();
+				opcode = Integer.parseInt(sc.next());
 				switch(opcode){
 					case 1:
-						int accountID1= sc.nextInt();
+						int accountID1= Integer.parseInt(sc.next()) ;
 						String password1 = sc.next();
 						boolean success1= login(accountID1,password1);
 						if(success1)
@@ -59,7 +61,7 @@ public class Driver{
 						String fullName2=sc.next();
 						String email2 = sc.next();
 						String password2=sc.next();
-						int creditCard2= sc.nextInt();
+						int creditCard2= Integer.parseInt(sc.next());
 						boolean success2 = signUp(fullName2,email2,password2,creditCard2);
 						if(success2)
 							System.out.println("-----Sign Up Successful!-----");
@@ -67,10 +69,10 @@ public class Driver{
 							System.out.println("-----Sign Up Failed!-----");
 						break;
 					case 3:
-						int accountID3= sc.nextInt();
-						int startstdID3 =sc.nextInt();
-						int endstID3=sc.nextInt();
-						int seatID3 = sc.nextInt();
+						int accountID3= Integer.parseInt(sc.next());
+						int startstdID3 =Integer.parseInt(sc.next()) ;
+						int endstID3=Integer.parseInt(sc.next());
+						int seatID3 =Integer.parseInt( sc.next());
 						String dateTime3= sc.next();
 						boolean success3 = reserveTrip(accountID3,startstdID3,endstID3,seatID3,dateTime3);
 						if(success3)
@@ -79,10 +81,10 @@ public class Driver{
 							System.out.println("-----Reserve Failed!-----");
 						break;
 					case 4:
-						int accountID4= sc.nextInt();
-						int startstdID4 =sc.nextInt();
-						int endstID4=sc.nextInt();
-						int seatID4 = sc.nextInt();
+						int accountID4= Integer.parseInt(sc.next());
+						int startstdID4 =Integer.parseInt(sc.next());
+						int endstID4=Integer.parseInt(sc.next());
+						int seatID4 = Integer.parseInt(sc.next());
 						String dateTime4= sc.next();
 						boolean success4 = updateTrip(accountID4,startstdID4,endstID4,seatID4,dateTime4);
 						if(success4)
@@ -99,9 +101,9 @@ public class Driver{
 					case 8:
 						break;
 					case 9:
-						int accountID9=sc.nextInt();
+						int accountID9=Integer.parseInt(sc.next());
 						String email9 = sc.next();
-						int creditcard9 = sc.nextInt();
+						int creditcard9 = Integer.parseInt(sc.next());
 						String password9 = sc.next();
 						boolean success9 = updateAccount(accountID9,email9,creditcard9,password9);
 						if(success9)
@@ -110,10 +112,10 @@ public class Driver{
 							System.out.println("-----Update Account Failed!-----");
 						break;
 					case 10:
-						int accountID10 = sc.nextInt();
+						int accountID10 = Integer.parseInt(sc.next());
 						String fullName10 = sc.next();
 						String email10 = sc.next();
-						int creditCard10 = sc.nextInt();
+						int creditCard10 = Integer.parseInt(sc.next());
 						String newpassword10 = sc.next();
 						boolean success10 = updatePassword(accountID10,fullName10,email10,creditCard10,newpassword10);
 						if(success10)
@@ -122,7 +124,7 @@ public class Driver{
 							System.out.println("-----Update Password Failed!-----");
 						break;
 					case 11:
-						int accountID11=  sc.nextInt();
+						int accountID11= Integer.parseInt( sc.next());
 						boolean success11 = banCustomer(accountID11);
 						if(success11)
 							System.out.println("-----Ban Successful!-----");
@@ -130,7 +132,7 @@ public class Driver{
 							System.out.println("-----Ban Failed!-----");
 						break;
 					case 12:
-						int trainID12 = sc.nextInt();
+						int trainID12 =Integer.parseInt(sc.next());
 						String deptTime12 = sc.next();
 						boolean isfull12 = sc.nextBoolean();
 						boolean success12 = addTrain(trainID12,deptTime12,isfull12);
@@ -140,9 +142,9 @@ public class Driver{
 							System.out.println("-----Add Train Failed!-----");
 						break;
 					case 13:
-						int trainID13 = sc.nextInt();
+						int trainID13 = Integer.parseInt(sc.next());
 						String name13 = sc.next();
-						int order13 = sc.nextInt();
+						int order13 = Integer.parseInt(sc.next());
 						boolean success13 = addStation(trainID13, name13,order13);
 						if(success13)
 							System.out.println("-----Add Station Successful!-----");
@@ -150,7 +152,7 @@ public class Driver{
 							System.out.println("-----Add Station Failed!-----");
 						break;
 					case 14:
-						int accountID14 = sc.nextInt();
+						int accountID14 = Integer.parseInt(sc.next());
 						boolean success14 = removeBan(accountID14);
 						if(success14)
 							System.out.println("-----Remove Ban Successful!-----");
@@ -158,7 +160,7 @@ public class Driver{
 							System.out.println("-----Remove Ban Failed!-----");
 						break;
 					case 15:
-						int accountID15 = sc.nextInt();
+						int accountID15 = Integer.parseInt(sc.next());
 						boolean wifi=sc.nextBoolean();
 						boolean success15 =wifiUpdate(accountID15,wifi);
 						if(success15)
@@ -176,11 +178,12 @@ public class Driver{
 				
 			}catch(Exception e){
 				System.out.println("-----Not a Valid Command!-----");	
+				System.exit(0);
 			}
+			
 		}
 		
 		//--------------------Console-----------------------------------------------
-		sc.close();
 		
 		try{
 			connection.close();
@@ -198,10 +201,10 @@ public class Driver{
     		String code = "select *"
     				    + "from Account_Holder \n"
     				    + "where accountID ="+accountID
-    				    +" and password = ' "+ password +" ' ";
+    				    +" and password = '"+ password +"' ";
     				  
-    		boolean hasResults =statement.execute(code);
-    		if(hasResults)
+    		ResultSet hasResults =statement.executeQuery(code);
+    		if(hasResults.first() )
     			return true;
     	}catch(Exception e){
     		e.printStackTrace();
@@ -236,14 +239,13 @@ public class Driver{
     {
     	PreparedStatement preparedstatement=null;
     	try{
-        String code = "INSERT INTO Passenger values(?,?,?,?,?,?)";
+        String code = "INSERT INTO Passenger(accountID,startStID,endStID,seatID,dateTime) values(?,?,?,?,?)";
         	preparedstatement=connection.prepareStatement(code);
             preparedstatement.setInt(1, accountID);
             preparedstatement.setInt(2, startStdID);
             preparedstatement.setInt(3, endStID);
             preparedstatement.setInt(4, seatID);
             preparedstatement.setString(5, dateTime);
-            preparedstatement.setBoolean(6, false);
             int hasChanged = preparedstatement.executeUpdate();
             if(hasChanged ==1)
                 return true;
