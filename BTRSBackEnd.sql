@@ -79,7 +79,7 @@ CREATE Trigger Passenger
 After insert on Banned 
 for each row
 BEGIN
-delete from Passenger where old.accountID = accountID;
+delete from Passenger where new.accountID = accountID;
 END;
 
 
