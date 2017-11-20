@@ -75,6 +75,12 @@ BEGIN
 END//
 DELIMITER ;
 
+#if a person is passenger and they are banned they will be removed
+CREATE Trigger Passenger
+After insert on Banned 
+for each row
+delete from Passenger where old.accountID = accountID;
+
 
 LOAD DATA LOCAL INFILE './data/account_holders.txt' INTO TABLE Account_Holder(fullName,email,password,creditCard);
 #LOAD DATA LOCAL INFILE './data/passengers.txt' INTO TABLE Passenger(accountID,startStID,endStID,seatID,dateTime,wifi);
