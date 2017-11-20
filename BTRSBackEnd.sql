@@ -80,7 +80,10 @@ DROP Trigger if exists Passenger;
 CREATE Trigger Passenger
 After insert on Banned 
 for each row
+BEGIN
 delete from Passenger where old.accountID = accountID;
+END;
+
 
 DROP TRIGGER IF EXISTS InsertCarTrigger;
 DELIMITER //
