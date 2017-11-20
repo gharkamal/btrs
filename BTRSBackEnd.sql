@@ -63,6 +63,17 @@ CREATE TABLE Banned(
 accountID INT REFERENCES Account_Holder(accountID) ON UPDATE CASCADE ON DELETE CASCADE
 );
 
+DROP PROCEDURE IF EXISTS archivePassengers;
+DELIMITER //
+CREATE PROCEDURE archivePassengers(IN Passenger
+last date)
+BEGIN
+   INSERT INTO archive(passengerID, accountID, startStID ,endStID ,seatID, dateTime, wifi)
+   Select passengerID, accountID, startStID ,endStID ,seatID, dateTime, wifi from Passenger where dateTime <= last;
+   Delete from Reservations where updatedAt <= last;
+END//
+DELIMITER ;
+
 
 LOAD DATA LOCAL INFILE './data/account_holders.txt' INTO TABLE Account_Holder(fullName,email,password,creditCard);
 #LOAD DATA LOCAL INFILE './data/passengers.txt' INTO TABLE Passenger(accountID,startStID,endStID,seatID,dateTime,wifi);
