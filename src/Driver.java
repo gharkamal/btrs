@@ -36,8 +36,8 @@ public class Driver{
 		System.out.println("   9 <accountID> <newEmail> <newCreditCard> <password>             // Update user information");
 		System.out.println("   10 <accountID> <fullName> <email> <creditCard> <newPassword>    // Update new password");
 		System.out.println("   11 <accountID>                                                  // Ban accountID");
-		System.out.println("   12 <trainID> <deptDateTime> <isFull>                            // Add new train");
-		System.out.println("   13 <stationID> <name> <order>                                   // Add new station");
+		System.out.println("   12 <deptDateTime> <isFull>                            // Add new train");
+		System.out.println("   13 <name> <order>                                   // Add new station");
 		System.out.println("   14 <accountID>                                                  // Remove ban");
 		System.out.println("   15 <accountID> <wifi>                                           // Update wifi");
 		System.out.println("   16 Quit");
@@ -132,20 +132,19 @@ public class Driver{
 							System.out.println("-----Ban Failed!-----");
 						break;
 					case 12:
-						int trainID12 =Integer.parseInt(sc.next());
 						String deptTime12 = sc.next();
 						boolean isfull12 = sc.nextBoolean();
-						boolean success12 = addTrain(trainID12,deptTime12,isfull12);
+						boolean success12 = addTrain(deptTime12,isfull12);
 						if(success12)
 							System.out.println("-----Add Train Successful!-----");
 						else 
 							System.out.println("-----Add Train Failed!-----");
 						break;
 					case 13:
-						int trainID13 = Integer.parseInt(sc.next());
+				
 						String name13 = sc.next();
 						int order13 = Integer.parseInt(sc.next());
-						boolean success13 = addStation(trainID13, name13,order13);
+						boolean success13 = addStation(name13,order13);
 						if(success13)
 							System.out.println("-----Add Station Successful!-----");
 						else 
@@ -239,8 +238,7 @@ public class Driver{
     {
     	PreparedStatement preparedstatement=null;
     	try{
-        String code = "INSERT INTO Passenger(accountID,startStID,endStID,seatID,dateTime) values(?,?,?,?,?)"
-                        + "where startStID, dateTime, seatID not in (select startStID, dateTime, seatID from Passenger)";
+        String code = "INSERT INTO Passenger(accountID,startStID,endStID,seatID,dateTime) values(?,?,?,?,?)";
         	preparedstatement=connection.prepareStatement(code);
             preparedstatement.setInt(1, accountID);
             preparedstatement.setInt(2, startStdID);
@@ -259,61 +257,21 @@ public class Driver{
     }
 
     //Functional requirement 4: Change/update train destination: Update a trip destination.
-    public static boolean updateTrip(int accountID, int startStdID, int endStID, int seatID, String dateTime)
+    public static boolean updateTrip(int accountID, int startStID, int endStID, int seatID, String dateTime)
     {
     	PreparedStatement preparedstatement=null;
     	try{
-         	String code = "UPDATE Passenger set startStdID = ?, endStID = ?, seatID = ?, dateTime = ?"
-                         + "WHERE accountID = ?";
+         	String code = "UPDATE Passenger "
+         			     + "set startStID = ?, endStID = ?, seatID = ?, dateTime = ?"
+                         +"WHERE accountID = ?";
          	preparedstatement=connection.prepareStatement(code);
-            preparedstatement.setInt(1, accountID);
-            preparedstatement.setInt(2, startStdID);
-            preparedstatement.setInt(3, endStID);
-            preparedstatement.setInt(4, seatID);
-            preparedstatement.setString(5, dateTime);
-            preparedstatement.setInt(6, accountID);
+            preparedstatement.setInt(1, startStID );
+            preparedstatement.setInt(2, endStID);
+            preparedstatement.setInt(3, seatID);
+            preparedstatement.setString(4, dateTime);
+            preparedstatement.setInt(5, accountID);
             int hasChanged = preparedstatement.executeUpdate();
             if(hasChanged ==1)
-                return true;
-        }catch(Exception e){
-            e.printStackTrace();
-            return false;
-        }
-        return false;
-    }
-
-    //Functional Requirment 5: Change train time: Update a trip time.
-    
-
-    //Requirment 7 : Change   seat:   Update   a   trip   seat.
-    public static boolean changeSeat(int accountID, int currentSeatID, int updateSeat){
-        PreparedStatement preparedstatement=null;
-        try{
-            String code = "Update Passenger "
-                         +"Set seatID = ?"
-                         +"where accountID = ? ";
-            preparedstatement = connection.prepareStatement(code);
-            preparedstatement.setInt(1,updateSeat);
-            preparedstatement.setInt(2,accountID);
-            int hasChanged = preparedstatement.executeUpdate();
-            if(hasChanged==1)
-                return true;
-        }catch(Exception e){
-            e.printStackTrace();
-            return false;
-        }
-        return false;
-    }
-
-    //Requirement 8: Delete reservation:   Delete   a   trip.
-      public static boolean deleteReservation(int accountID){
-        PreparedStatement preparedstatement=null;
-        try{
-            String code = "DELETE FROM Passenger where accountID = ?";
-            preparedstatement = connection.prepareStatement(code);
-            preparedstatement.setInt(1,accountID);
-            int hasChanged = preparedstatement.executeUpdate();
-            if(hasChanged==1)
                 return true;
         }catch(Exception e){
             e.printStackTrace();
@@ -327,8 +285,8 @@ public class Driver{
     	PreparedStatement preparedstatement=null;
     	try{
     		String code = "Update Account_Holder "
-    					 +"Set email = ?, creditCard=?"
-    					 +"where accountID = ? and password = ?";
+    					 +"Set email = ?, creditCard=? \n"
+    					 +"where accountID = ? AND password = ?";
     		preparedstatement = connection.prepareStatement(code);
     		preparedstatement.setString(1,newEmail);
     		preparedstatement.setInt(2,newCreditCard);
@@ -372,11 +330,9 @@ public class Driver{
     		PreparedStatement preparedstatement= null;
     		
     		try {
-    			String code = "INSERT INTO Banned(accountID) values(?) "
-    					+ "where ? in (select accountID from Account_Holder)";
+    			String code = "INSERT INTO Banned(accountID) values(?)";
     			preparedstatement=connection.prepareStatement(code);
         		preparedstatement.setInt(1, accountID);
-                preparedstatement.setInt(2, accountID);
         		int hasChanged = preparedstatement.executeUpdate();
         		if(hasChanged ==1)
         			return true;
@@ -390,20 +346,17 @@ public class Driver{
     }
     
     //Functional Requirement 12: add a train
-    public static boolean addTrain(int trainID, String deptDateTime, boolean isFull)
+    public static boolean addTrain(String deptDateTime, boolean isFull)
     {
     		PreparedStatement preparedstatement= null;
     		try {
-    			String code = "INSERT INTO Train(trainID, deptDateTime, isFull) values(?,?,?)"
-    					+ " where trainID not in (select trainID from Train)";
+    			String code = "INSERT INTO Train(deptTime, isFull) values(?,?)";
     			preparedstatement = connection.prepareStatement(code);
-    			preparedstatement.setInt(1, trainID);
-    			preparedstatement.setString(2, deptDateTime);
-    			preparedstatement.setBoolean(3, isFull);
+    			preparedstatement.setString(1, deptDateTime);
+    			preparedstatement.setBoolean(2, isFull);
     			int hasChanged = preparedstatement.executeUpdate();
         		if(hasChanged ==1)
         			return true;
-        		
     		}catch(Exception e) {
     			e.printStackTrace();
     			return false;
@@ -411,17 +364,15 @@ public class Driver{
     		return false;
     }
     
-    //Functional Requirement 13: Adding station: Add a new station.
-    public static boolean addStation(int stationID, String name, int order)
+    //Functional Requirement 13: Adding station
+    public static boolean addStation(String name, int order)
     {
     		PreparedStatement preparedstatement= null;
     		try {
-    			String code = "INSERT INTO Station(stationID, name, order) values(?,?,?)"
-    					+ " where stationID not in (select stationID from Station)";
+    			String code = "INSERT INTO Station(name, orderNumber) values(?,?)";
     			preparedstatement = connection.prepareStatement(code);
-    			preparedstatement.setInt(1, stationID);
-    			preparedstatement.setString(2, name);
-    			preparedstatement.setInt(3, order);
+    			preparedstatement.setString(1, name);
+    			preparedstatement.setInt(2, order);
     			int hasChanged = preparedstatement.executeUpdate();
         		if(hasChanged ==1)
         			return true;
@@ -456,12 +407,12 @@ public class Driver{
     {
     	PreparedStatement preparedstatement= null;
 		try {
-			String code = "UPDATE Account_Holder set wifi = ? where accountID = ? ";
+			String code = "UPDATE Passenger set wifi = ? where accountID = ? ";
 			preparedstatement = connection.prepareStatement(code);
 			preparedstatement.setBoolean(1, wifi);
 			preparedstatement.setInt(2, accountID);
-			int hasChanged = preparedstatement.executeUpdate();
-			if(hasChanged ==1)
+			int hasResult = preparedstatement.executeUpdate();
+			if(hasResult>0)
     			return true;
 			
 		}catch(Exception e) {

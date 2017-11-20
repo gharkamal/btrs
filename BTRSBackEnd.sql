@@ -16,7 +16,7 @@ ALTER TABLE Account_holder AUTO_INCREMENT=0;
 
 DROP TABLE IF EXISTS Passenger;
 CREATE TABLE Passenger(
-passengerID INT,
+passengerID INT AUTO_INCREMENT,
 accountID INT REFERENCES Account_Holder(accountID), 
 startStID INT,
 endStID INT,
@@ -25,7 +25,7 @@ dateTime date,
 wifi boolean,
 PRIMARY KEY(passengerID)
 );
-
+ALTER TABLE Passenger AUTO_INCREMENT=0;
 
 DROP TABLE IF EXISTS Train;
 CREATE TABLE Train(
@@ -60,7 +60,8 @@ FOREIGN KEY(passengerID) REFERENCES Passenger(passengerID) ON UPDATE CASCADE ON 
 
 DROP TABLE IF EXISTS Banned; 
 CREATE TABLE Banned(
-accountID INT REFERENCES Account_Holder(accountID) ON UPDATE CASCADE ON DELETE CASCADE
+accountID INT REFERENCES Account_Holder(accountID) ON UPDATE CASCADE ON DELETE CASCADE,
+PRIMARY KEY(accountID)
 );
 
 DROP PROCEDURE IF EXISTS archivePassengers;
