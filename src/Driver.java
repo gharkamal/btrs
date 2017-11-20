@@ -239,7 +239,8 @@ public class Driver{
     {
     	PreparedStatement preparedstatement=null;
     	try{
-        String code = "INSERT INTO Passenger(accountID,startStID,endStID,seatID,dateTime) values(?,?,?,?,?)";
+        String code = "INSERT INTO Passenger(accountID,startStID,endStID,seatID,dateTime) values(?,?,?,?,?)"
+                        + "where startStID, dateTime, seatID not in (select startStID, dateTime, seatID from Passenger)";
         	preparedstatement=connection.prepareStatement(code);
             preparedstatement.setInt(1, accountID);
             preparedstatement.setInt(2, startStdID);
