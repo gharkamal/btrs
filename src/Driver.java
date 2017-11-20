@@ -262,7 +262,7 @@ public class Driver{
     	PreparedStatement preparedstatement=null;
     	try{
          	String code = "UPDATE Passenger "
-         			     + "set startStID = ?, endStID = ?, seatID = ?, dateTime = ?"
+         			     + "SET startStID = ?, endStID = ?, seatID = ?, dateTime = ?"
                          +"WHERE accountID = ?";
          	preparedstatement=connection.prepareStatement(code);
             preparedstatement.setInt(1, startStID );
@@ -280,13 +280,53 @@ public class Driver{
         return false;
     }
 
+      //Functional Requirment 5: Change train time: Update a trip time.
+    
+
+    //Requirment 7 : Change   seat:   Update   a   trip   seat.
+    public static boolean changeSeat(int accountID, int currentSeatID, int updateSeat){
+        PreparedStatement preparedstatement=null;
+        try{
+            String code = "UPDATE Passenger "
+                         +"SET seatID = ?"
+                         +"WHERE accountID = ? ";
+            preparedstatement = connection.prepareStatement(code);
+            preparedstatement.setInt(1,updateSeat);
+            preparedstatement.setInt(2,accountID);
+            int hasChanged = preparedstatement.executeUpdate();
+            if(hasChanged==1)
+                return true;
+        }catch(Exception e){
+            e.printStackTrace();
+            return false;
+        }
+        return false;
+    }
+
+    //Requirement 8: Delete reservation:   Delete   a   trip.
+      public static boolean deleteReservation(int accountID){
+        PreparedStatement preparedstatement=null;
+        try{
+            String code = "DELETE FROM Passenger WHERE accountID = ?";
+            preparedstatement = connection.prepareStatement(code);
+            preparedstatement.setInt(1,accountID);
+            int hasChanged = preparedstatement.executeUpdate();
+            if(hasChanged==1)
+                return true;
+        }catch(Exception e){
+            e.printStackTrace();
+            return false;
+        }
+        return false;
+    }
+
     // Functional requirement 9
     public static boolean updateAccount(int accountID,String newEmail,int newCreditCard, String password ){
     	PreparedStatement preparedstatement=null;
     	try{
-    		String code = "Update Account_Holder "
-    					 +"Set email = ?, creditCard=? \n"
-    					 +"where accountID = ? AND password = ?";
+    		String code = "UPDATE Account_Holder "
+    					 +"SET email = ?, creditCard=? \n"
+    					 +"WHERE accountID = ? AND password = ?";
     		preparedstatement = connection.prepareStatement(code);
     		preparedstatement.setString(1,newEmail);
     		preparedstatement.setInt(2,newCreditCard);
