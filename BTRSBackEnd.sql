@@ -12,20 +12,20 @@ creditCard INT,
 UNIQUE KEY(email),
 PRIMARY KEY(accountID)
 );
-ALTER TABLE Account_holder AUTO_INCREMENT=0;
+ALTER TABLE Account_holder AUTO_INCREMENT=1000;
 
 DROP TABLE IF EXISTS Passenger;
 CREATE TABLE Passenger(
 passengerID INT AUTO_INCREMENT,
-accountID INT REFERENCES Account_Holder(accountID), 
-startStID INT,
-endStID INT,
-seatID INT, 
-dateTime date,
+accountID INT REFERENCES Account_Holder(accountID),
+# startStID INT,
+# endStID INT,
+# seatID INT,
+# dateTime date,
 wifi boolean,
 PRIMARY KEY(passengerID)
 );
-ALTER TABLE Passenger AUTO_INCREMENT=0;
+ALTER TABLE Passenger AUTO_INCREMENT=500;
 
 DROP TABLE IF EXISTS Train;
 CREATE TABLE Train(
@@ -72,6 +72,24 @@ BEGIN
    Select passengerID, accountID, startStID ,endStID ,seatID, dateTime, wifi from Passenger where dateTime <= last;
    Delete from Passenger where updatedAt <= last;
 END//
+DELIMITER ;
+
+
+DROP PROCEDURE IF EXISTS checkValidSeatCar;
+DELIMITER //
+CREATE PROCEDURE checkValidSeatCar(
+  IN seatID VARCHAR(3),
+  IN carNumber INT
+)
+  BEGIN
+    IF NOT (seatID REGEXP '^([1-9]|10|11|12|13|14)[A-D]$' # Not very nice regex because of posix style..
+            AND carNumber BETWEEN 0 AND 3) THEN
+      SIGNAL SQLSTATE '45000' SET MESSAGE_TEXT = 'Invalid seat/car number!';
+    END IF;
+  END;
+//
+DELIMITER ;
+
 
 #if a person is passenger and they are banned they will be removed
 DROP Trigger if exists Passenger;
@@ -84,25 +102,23 @@ END;
 
 
 DROP TRIGGER IF EXISTS InsertCarTrigger;
-DELIMITER //
 CREATE TRIGGER InsertCarTrigger
   BEFORE INSERT ON Car
   FOR EACH ROW
-  BEGIN
-    IF NOT (NEW.seatID REGEXP '^([1-9]|10|11|12|13|14)[A-D]$' # Not very nice regex because of posix style..
-       AND NEW.carNumber BETWEEN 0 AND 3) THEN
-      SIGNAL SQLSTATE '45000' SET MESSAGE_TEXT = 'Invalid seat/car number!';
-    END IF;
-  END;
-//
-DELIMITER ;
+  CALL checkValidSeatCar(NEW.seatID, NEW.carNumber);
 
+
+DROP TRIGGER IF EXISTS UpdateCarTrigger;
+CREATE TRIGGER UpdateCarTrigger
+  BEFORE UPDATE ON Car
+  FOR EACH ROW
+  CALL checkValidSeatCar(NEW.seatID, NEW.carNumber);
 
 
 LOAD DATA LOCAL INFILE './data/account_holders.txt' INTO TABLE Account_Holder(fullName,email,password,creditCard);
-#LOAD DATA LOCAL INFILE './data/passengers.txt' INTO TABLE Passenger(accountID,startStID,endStID,seatID,dateTime,wifi);
+LOAD DATA LOCAL INFILE './data/passengers.txt' INTO TABLE Passenger(accountID,wifi);
 LOAD DATA LOCAL INFILE './data/trains.txt' INTO TABLE Train(deptTime);
 LOAD DATA LOCAL INFILE './data/stations.txt' INTO TABLE Station(name,orderNumber);
-#LOAD DATA LOCAL INFILE './data/cars.txt' INTO TABLE Car(carNumber,seatID,trainID);
+LOAD DATA LOCAL INFILE './data/cars.txt' INTO TABLE Car(carNumber,seatID,trainID,passengerID);
 #LOAD DATA LOCAL INFILE './data/banneds.txt' INTO TABLE Banned(accountID);
 
