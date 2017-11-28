@@ -141,7 +141,7 @@ CREATE TRIGGER CarChangeSeatTrigger
     IF (SELECT COUNT(*) FROM Car WHERE trainID = NEW.trainID) = 224 THEN
       UPDATE Train SET isFull = 1 WHERE trainID = NEW.trainID;
     END IF; # ending if here because we want these two ↑↓ checks to be performed.
-    IF OLD.trainID IN (SELECT trainID FROM Train WHERE isFull = 1) THEN
+    IF OLD.trainID IN (SELECT trainID FROM Train WHERE isFull) THEN
       UPDATE Train SET isFull = 0 WHERE trainID = OLD.trainID;
     END IF;
   END ; //
@@ -154,7 +154,7 @@ CREATE TRIGGER CarNoFullTrigger
   AFTER DELETE ON Car
   FOR EACH ROW
   BEGIN
-    IF OLD.trainID IN (SELECT trainID FROM Train) THEN
+    IF OLD.trainID IN (SELECT trainID FROM Train WHERE isFull) THEN
       UPDATE Train SET isFull = 0 WHERE trainID = OLD.trainID;
     END IF;
   END ; //
