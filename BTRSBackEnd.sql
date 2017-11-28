@@ -75,16 +75,19 @@ END//
 DELIMITER ;
 
 
-DROP PROCEDURE IF EXISTS checkValidSeatCar;
+DROP PROCEDURE IF EXISTS checkValidUpdate;
 DELIMITER //
-CREATE PROCEDURE checkValidSeatCar(
+CREATE PROCEDURE checkValidUpdate(
   IN seatID VARCHAR(3),
-  IN carNumber INT
+  IN carNumber INT,
+  IN trainID INT
 )
   BEGIN
     IF NOT (seatID REGEXP '^([1-9]|10|11|12|13|14)[A-D]$' # Not very nice regex because of posix style..
             AND carNumber BETWEEN 0 AND 3) THEN
       SIGNAL SQLSTATE '45000' SET MESSAGE_TEXT = 'Invalid seat/car number!';
+    ELSEIF trainID IN (SELECT Train.trainID FROM Train WHERE isFull) THEN
+      SIGNAL SQLSTATE '45000' SET MESSAGE_TEXT = 'The train is full!';
     END IF;
   END;
 //
@@ -105,14 +108,57 @@ DROP TRIGGER IF EXISTS InsertCarTrigger;
 CREATE TRIGGER InsertCarTrigger
   BEFORE INSERT ON Car
   FOR EACH ROW
-  CALL checkValidSeatCar(NEW.seatID, NEW.carNumber);
+  CALL checkValidUpdate(NEW.seatID, NEW.carNumber, NEW.trainID);
 
 
 DROP TRIGGER IF EXISTS UpdateCarTrigger;
 CREATE TRIGGER UpdateCarTrigger
   BEFORE UPDATE ON Car
   FOR EACH ROW
-  CALL checkValidSeatCar(NEW.seatID, NEW.carNumber);
+  CALL checkValidUpdate(NEW.seatID, NEW.carNumber, NEW.trainID);
+
+
+# 224 is the total number of seats in each train.
+DROP TRIGGER IF EXISTS CarFullTrigger;
+DELIMITER //
+CREATE TRIGGER CarFullTrigger
+  AFTER INSERT ON Car
+  FOR EACH ROW
+  BEGIN
+    IF (SELECT COUNT(*) FROM Car WHERE trainID = NEW.trainID) = 224 THEN
+      UPDATE Train SET isFull = 1 WHERE trainID = NEW.trainID;
+    END IF;
+  END; //
+DELIMITER ;
+
+
+DROP TRIGGER IF Exists CarChangeSeatTrigger;
+DELIMITER //
+CREATE TRIGGER CarChangeSeatTrigger
+  AFTER UPDATE ON Car
+  FOR EACH ROW
+  BEGIN
+    IF (SELECT COUNT(*) FROM Car WHERE trainID = NEW.trainID) = 224 THEN
+      UPDATE Train SET isFull = 1 WHERE trainID = NEW.trainID;
+    END IF; # ending if here because we want these two ↑↓ checks to be performed.
+    IF OLD.trainID IN (SELECT trainID FROM Train WHERE isFull = 1) THEN
+      UPDATE Train SET isFull = 0 WHERE trainID = OLD.trainID;
+    END IF;
+  END ; //
+DELIMITER ;
+
+
+DROP TRIGGER IF EXISTS CarNoFullTrigger;
+DELIMITER //
+CREATE TRIGGER CarNoFullTrigger
+  AFTER DELETE ON Car
+  FOR EACH ROW
+  BEGIN
+    IF OLD.trainID IN (SELECT trainID FROM Train) THEN
+      UPDATE Train SET isFull = 0 WHERE trainID = OLD.trainID;
+    END IF;
+  END ; //
+DELIMITER ;
 
 
 LOAD DATA LOCAL INFILE './data/account_holders.txt' INTO TABLE Account_Holder(fullName,email,password,creditCard);
