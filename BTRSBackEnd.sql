@@ -19,7 +19,7 @@ CREATE TABLE Passenger(
 passengerID INT AUTO_INCREMENT,
 accountID INT REFERENCES Account_Holder(accountID),
 # startStID INT,
-# endStID INT,
+endStID INT REFERENCES Station(stationID),
 # seatID INT,
 # dateTime date,
 wifi boolean,
@@ -116,7 +116,7 @@ CREATE TRIGGER UpdateCarTrigger
 
 
 LOAD DATA LOCAL INFILE './data/account_holders.txt' INTO TABLE Account_Holder(fullName,email,password,creditCard);
-LOAD DATA LOCAL INFILE './data/passengers.txt' INTO TABLE Passenger(accountID,wifi);
+LOAD DATA LOCAL INFILE './data/passengers.txt' INTO TABLE Passenger(accountID,endStId,wifi);
 LOAD DATA LOCAL INFILE './data/trains.txt' INTO TABLE Train(deptTime);
 LOAD DATA LOCAL INFILE './data/stations.txt' INTO TABLE Station(name,orderNumber);
 LOAD DATA LOCAL INFILE './data/cars.txt' INTO TABLE Car(carNumber,seatID,trainID,passengerID);

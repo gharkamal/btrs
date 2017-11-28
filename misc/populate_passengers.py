@@ -28,7 +28,7 @@ def populate(reservation_rate=0.4,acc_hldr_pbty=0.6,wifi_pbty=0.5):
                 id = 0
         else:
             id = 0
-        output_str += "{0}\t{1}\n".format(id, int(not rand % wifi_pbty))
+        output_str += "{0}\t{1}\t{2}\n".format(id, random.randint(1,13), int(not rand % wifi_pbty))
         count += 1
     file = open("passengers.txt", "w")
     file.write(output_str)
