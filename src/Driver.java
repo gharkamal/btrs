@@ -36,11 +36,12 @@ public class Driver{
         System.out.println("   9 <accountID> <newEmail> <newCreditCard> <password>             // Update user information");
         System.out.println("   10 <accountID> <fullName> <email> <creditCard> <newPassword>    // Update new password");
         System.out.println("   11 <accountID>                                                  // Ban accountID");
-        System.out.println("   12 <deptDateTime> <isFull>                            // Add new train");
-        System.out.println("   13 <name> <order>                                   // Add new station");
+        System.out.println("   12 <deptDateTime> <isFull>                            		   // Add new train");
+        System.out.println("   13 <name> <order>                                   			   // Add new station");
         System.out.println("   14 <accountID>                                                  // Remove ban");
         System.out.println("   15 <accountID> <wifi>                                           // Update wifi");
-        System.out.println("   16 Quit");
+        System.out.println("   16                                            // View Passengers (Admin)");
+        System.out.println("   17 Quit");
         int opcode=0;
     
         while(run){
@@ -175,6 +176,14 @@ public class Driver{
                             System.out.println("-----Update WIFI Failed!-----");
                         break;
                     case 16:
+                        //int accountID16 = Integer.parseInt(sc.next());
+                        ResultSet success16 =currentPassengers();
+                        if(success16.first())
+                            System.out.println(success16);
+                        else 
+                            System.out.println("-----Update WIFI Failed!-----");
+                        break;
+                    case 17:
                         System.out.println("-----Bye!-----");
                         run=false;
                         break;
@@ -467,6 +476,28 @@ public class Driver{
             return false;
         }
         return false;
+    }
+    
+    //Functional Requirement 16: Admin view to see the passengers and projected train and ride
+    public static ResultSet currentPassengers() {
+    	Statement statement= null;
+        try {
+        	statement = connection.createStatement();
+            String code = "SELECT accountID, carNumber FROM Passenger, Car"
+            		+ " where Passenger.passengerID = Car.passengerID";
+            
+            ResultSet hasResults =statement.executeQuery(code);
+            
+            System.out.println("this is here " + hasResults.first());
+            if(hasResults.first() )
+                return hasResults;
+            
+        }catch(Exception e) {
+            e.printStackTrace();
+            return null;
+        }
+        //return hasResults; 
+		return null;
     }
     
     

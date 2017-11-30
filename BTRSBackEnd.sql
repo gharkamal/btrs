@@ -1,3 +1,4 @@
+SET sql_mode='';
 DROP DATABASE IF EXISTS BTRS; 
 CREATE DATABASE BTRS;
 USE BTRS;
@@ -91,7 +92,7 @@ CREATE PROCEDURE checkValidUpdate(
     END IF;
   END;
 //
-DELIMITER ;
+DELIMITER;
 
 
 #if a person is passenger and they are banned they will be removed
@@ -129,7 +130,6 @@ CREATE TRIGGER CarFullTrigger
       UPDATE Train SET isFull = 1 WHERE trainID = NEW.trainID;
     END IF;
   END; //
-DELIMITER ;
 
 
 DROP TRIGGER IF Exists CarChangeSeatTrigger;
@@ -161,10 +161,10 @@ CREATE TRIGGER CarNoFullTrigger
 DELIMITER ;
 
 
-LOAD DATA LOCAL INFILE './data/account_holders.txt' INTO TABLE Account_Holder(fullName,email,password,creditCard);
-LOAD DATA LOCAL INFILE './data/passengers.txt' INTO TABLE Passenger(accountID,endStId,wifi);
-LOAD DATA LOCAL INFILE './data/trains.txt' INTO TABLE Train(deptTime);
-LOAD DATA LOCAL INFILE './data/stations.txt' INTO TABLE Station(name,orderNumber);
-LOAD DATA LOCAL INFILE './data/cars.txt' INTO TABLE Car(carNumber,seatID,trainID,passengerID);
-#LOAD DATA LOCAL INFILE './data/banneds.txt' INTO TABLE Banned(accountID);
+LOAD DATA LOCAL INFILE '/Users/Grewal/Documents/SJSU/Fall 2017/CS157A/btrs/data/account_holders.txt' INTO TABLE Account_Holder(fullName,email,password,creditCard);
+LOAD DATA LOCAL INFILE '/Users/Grewal/Documents/SJSU/Fall 2017/CS157A/btrs/data/passengers.txt' INTO TABLE Passenger(accountID,endStId,wifi);
+LOAD DATA LOCAL INFILE '/Users/Grewal/Documents/SJSU/Fall 2017/CS157A/btrs/data/trains.txt' INTO TABLE Train(deptTime);
+LOAD DATA LOCAL INFILE '/Users/Grewal/Documents/SJSU/Fall 2017/CS157A/btrs/data/stations.txt' INTO TABLE Station(name,orderNumber);
+LOAD DATA LOCAL INFILE '/Users/Grewal/Documents/SJSU/Fall 2017/CS157A/btrs/data/cars.txt' INTO TABLE Car(carNumber,seatID,trainID,passengerID);
+LOAD DATA LOCAL INFILE '/Users/Grewal/Documents/SJSU/Fall 2017/CS157A/btrs/data/banned.txt' INTO TABLE Banned(accountID);
 
