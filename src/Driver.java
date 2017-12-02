@@ -68,8 +68,21 @@ public class Driver{
                         		   opcode = Integer.parseInt(sc.next());
                         		   switch(opcode)
                         		   {
-                        		   case 1:
+                        		   case 1:		  
+                        			   showPossibleTripTimes(); //show user all the possible trip times                
+                        	    		   System.out.println("Input desired TrainID: ");
+                        	    		   int trainIDSelected = sc.nextInt();  //store TrainID here that user selects
                         			   //Show all possible trains avaliable and then tell user to select which one
+                        	    		   System.out.println("\n");
+                        	    		   showPossibleStation();
+                        	    		   System.out.println("Input desired Stop Station: ");                     	    		  
+                        	    		   String stopStation = sc.next();   //only gets first token if more than one word                      	    		  
+                        	    		   showPossibleSeat(trainIDSelected);
+                        	    		   System.out.println("Input Desired Seat: ");
+                        	    		   String seatSelected = sc.next();
+                        	    		   
+                        	    		   
+                        	    		   
                         			   break;
                         		   case 2:
                         			   System.out.println("Enter: <newEmail> <newCreditCard>");
@@ -132,23 +145,22 @@ public class Driver{
                         System.out.println(creditCard);
                         boolean success2 = signUp(firstName,lastName, email,password,creditCard);
                         if(success2)
-         
                             System.out.println("-----Sign Up Successful!-----");
                         else 
                             System.out.println("-----Sign Up Failed!-----");
                         break;
-                    case 3:
-                        int accountID3= Integer.parseInt(sc.next());
-                        int startstdID3 =Integer.parseInt(sc.next()) ;
-                        int endstID3=Integer.parseInt(sc.next());
-                        int seatID3 =Integer.parseInt( sc.next());
-                        String dateTime3= sc.next();
-                        boolean success3 = reserveTrip(accountID3,startstdID3,endstID3,seatID3,dateTime3);
-                        if(success3)
-                            System.out.println("-----Reserve Successful!-----");
-                        else 
-                            System.out.println("-----Reserve Failed!-----");
-                        break;
+//                    case 3:
+//                        int accountID3= Integer.parseInt(sc.next());
+//                        int startstdID3 =Integer.parseInt(sc.next()) ;
+//                        int endstID3=Integer.parseInt(sc.next());
+//                        int seatID3 =Integer.parseInt( sc.next());
+//                        String dateTime3= sc.next();
+//                       // boolean success3 = reserveTrip(accountID3,startstdID3,endstID3,seatID3,dateTime3);
+//                        if(success3)
+//                            System.out.println("-----Reserve Successful!-----");
+//                        else 
+//                            System.out.println("-----Reserve Failed!-----");
+//                        break;
                     case 4:
                         int accountID4= Integer.parseInt(sc.next());
                         int startstdID4 =Integer.parseInt(sc.next());
@@ -314,16 +326,82 @@ public class Driver{
         return false;
         
     }
+    
+    //allow user to see all possible trips from SF to select right one
+    public static void showPossibleTripTimes()
+    {
+    		PreparedStatement preparedstatement=null;
+    		try {
+    			String code = "select trainID, deptTime from Train where isFULL = false";
+    			preparedstatement=connection.prepareStatement(code);
+    			ResultSet result = preparedstatement.executeQuery();
+    			String deptTime = "";
+	    		   int trainID = 0;
+	    		   System.out.println("Train ID"  + " " + "Departure Time");
+	    		   while (result.next()) {
+	    				deptTime = result.getString("deptTime");
+	    				trainID = result.getInt("trainID"); 
+	    				System.out.println("	" +trainID + " " + deptTime);
+	            }
+    		}catch(Exception e){
+                e.printStackTrace();
+                //return null;
+            }   
+    }
 
+
+    //allow user to see all possible Stations from SF to select right one
+    public static void showPossibleStation()
+    {
+    		PreparedStatement preparedstatement=null;
+    		try {
+    			String code = "select name from Station";
+    			preparedstatement=connection.prepareStatement(code);
+    			ResultSet result = preparedstatement.executeQuery();
+    			String name = "";
+	    		   System.out.println("\nStation Names:");
+	    		   while (result.next()) {
+	    				name = result.getString("name"); 
+	    				System.out.println("	" + name);
+	            }
+    		}catch(Exception e){
+                e.printStackTrace();
+                //return null;
+            }   
+    }
+    
+    //Find available seat
+    public static void showPossibleSeat(int trainID)
+    {
+    		PreparedStatement preparedstatement=null;
+    		try {
+    			String code = "select seatID from Car, Train where Car.trainID = ? and Train.trainID = ? where passengerID = 'null'";
+    			preparedstatement=connection.prepareStatement(code);
+    		    preparedstatement.setInt(1, trainID);
+    		    preparedstatement.setInt(2, trainID);
+    			ResultSet result = preparedstatement.executeQuery();
+    			String seat;
+	    		   System.out.println("\nAvailable Seats:");
+	    		   while (result.next()) {
+	    				seat = result.getString("seatID"); 
+	    				System.out.println("	" + seat);
+	            }
+    		}catch(Exception e){
+                e.printStackTrace();
+                //return null;
+            }   
+    }
+
+    
     //Functional requirement 3 : Reserve train destination: Sign up for a trip.
-    public static boolean reserveTrip(int accountID, int startStdID, int endStID, int seatID, String dateTime)
+    public static boolean reserveTrip(int accountID, int endStID, int seatID, String dateTime)
     {
         PreparedStatement preparedstatement=null;
         try{
         String code = "INSERT INTO Passenger(accountID,startStID,endStID,seatID,dateTime) values(?,?,?,?,?)";
             preparedstatement=connection.prepareStatement(code);
             preparedstatement.setInt(1, accountID);
-            preparedstatement.setInt(2, startStdID);
+ 
             preparedstatement.setInt(3, endStID);
             preparedstatement.setInt(4, seatID);
             preparedstatement.setString(5, dateTime);
