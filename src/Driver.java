@@ -127,7 +127,7 @@ public class Driver{
 		                    	    		   else {
 		                    	    			   break;
 		                    	    		   }
-		                    	    		   updateTrip(accountID1, stopStation1, seatSelected1);
+		                    	    		   updateTrip(accountID1, stopStation1, seatSelected1, trainIDSelected1);
                         			   } else {
                         				   System.out.println("Please make a reservation First");
                         			   }
@@ -225,15 +225,15 @@ public class Driver{
                         break;
                     case 6:
                         break;
-                    case 7:
-                        int accountID7=Integer.parseInt(sc.next());
-                        int newseat7 = Integer.parseInt(sc.next());
-                        boolean success7 = changeSeat(accountID7,newseat7);
-                        if(success7)
-                            System.out.println("-----Update Seat Successful!-----");
-                        else 
-                            System.out.println("-----Update Seat Failed!-----");
-                        break;
+//                    case 7:
+//                        int accountID7=Integer.parseInt(sc.next());
+//                        int newseat7 = Integer.parseInt(sc.next());
+//                        boolean success7 = changeSeat(accountID7,newseat7);
+//                        if(success7)
+//                            System.out.println("-----Update Seat Successful!-----");
+//                        else 
+//                            System.out.println("-----Update Seat Failed!-----");
+//                        break;
                     case 8:
                         break;
                     case 9:
@@ -518,41 +518,81 @@ public class Driver{
     }
 
     //Functional requirement 4: Change/update train destination: Update a trip destination.  FOR ACCOUNT HOLDER
-    public static boolean updateTrip(int accountID, int endStID, String seatSelected1)
+    public static boolean updateTrip(int accountID, int endStID, String seatSelected1, int trainID)
     {
         PreparedStatement preparedstatement=null;
         try{
             String code = "UPDATE Passenger "
-                         + "SET endStID = ?, seatID = ? "
+                         + "SET endStID = ? "
                          +"WHERE accountID = ?";
             preparedstatement=connection.prepareStatement(code);
             preparedstatement.setInt(1, endStID);
-            preparedstatement.setString(2, seatSelected1);
-            preparedstatement.setInt(3, accountID);
+            preparedstatement.setInt(2, accountID);
             int hasChanged = preparedstatement.executeUpdate();
             if(hasChanged ==1)
-            		
+            		setOldSeatNull(accountID);
+            		changeSeat(accountID, seatSelected1, trainID, endStID);
                 return true;
         }catch(Exception e){
             e.printStackTrace();
             return false;
         }
-        return false;
     }
 
       //Functional Requirment 5: Change train time: Update a trip time.
     
-
+    public static ResultSet getPassengerID(int accountID, int endStrID)
+    {
+    		PreparedStatement statement = null;
+        try{
+            String code = "select passengerID from passenger where accountID =  ?";
+            statement = connection.prepareStatement(code);
+            statement.setInt(1, accountID);  
+            ResultSet hasResults =statement.executeQuery();
+            if(hasResults.next() )
+                return hasResults;
+        }catch(Exception e){
+            e.printStackTrace();
+            return null;
+        }
+        return null;
+    }
+    
+    public static boolean setOldSeatNull(int accountID)
+    {
+    	 PreparedStatement preparedstatement=null;
+         try{
+             String code = "UPDATE Car "
+                          + "SET passengerID = NULL "
+                          +"WHERE passengerID = (select passengerID from passenger where accountID = ?)";
+             preparedstatement=connection.prepareStatement(code);
+             preparedstatement.setInt(1, accountID);
+             int hasChanged = preparedstatement.executeUpdate();
+             if(hasChanged ==1)
+                 return true;
+         }catch(Exception e){
+             e.printStackTrace();
+             return false;
+         }
+         return false;
+    }
     //Requirement 7 : Change   seat:   Update   a   trip   seat.
-    public static boolean changeSeat(int accountID, int updateSeat){
+    public static boolean changeSeat(int accountID, String updateSeat, int trainID, int endStID){
         PreparedStatement preparedstatement=null;
         try{
-            String code = "UPDATE Passenger "
-                         +"SET seatID = ?  "
-                         +"WHERE accountID = ? ";
+        		int passengerID = 0;
+        		ResultSet id = getPassengerID(accountID, endStID);
+        		while(id.next()) {
+        			passengerID = id.getInt("passengerID");
+        		}
+        		System.out.println("MY PASSENGER ID :" + passengerID );
+            String code = "UPDATE car "
+                         +"SET passengerID = ?  "
+                         +"WHERE seatID = ? and trainID = ?";
             preparedstatement = connection.prepareStatement(code);
-            preparedstatement.setInt(1,updateSeat);
-            preparedstatement.setInt(2,accountID);
+            preparedstatement.setInt(1,passengerID);
+            preparedstatement.setString(2,updateSeat);
+            preparedstatement.setInt(3,trainID);
             int hasChanged = preparedstatement.executeUpdate();
             if(hasChanged>0)
                 return true;

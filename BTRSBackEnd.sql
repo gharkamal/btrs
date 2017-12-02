@@ -55,8 +55,7 @@ seatID VARCHAR(3),
 trainID INT,
 passengerID INT DEFAULT NULL,
 PRIMARY KEY(carNumber, seatID, trainID),
-FOREIGN KEY(trainID) REFERENCES Train(trainID) ON UPDATE CASCADE ON DELETE CASCADE,
-FOREIGN KEY(passengerID) REFERENCES Passenger(passengerID) ON UPDATE CASCADE ON DELETE CASCADE 
+FOREIGN KEY(trainID) REFERENCES Train(trainID) ON UPDATE CASCADE ON DELETE CASCADE
 );
 
 
@@ -105,14 +104,6 @@ BEGIN
 delete from Passenger where new.accountID = accountID;
 END;
 
-#update on account holder trip to change in seat in car table
-DROP Trigger if exists updateOnACTTrip;
-CREATE Trigger updateOnACTTrip
-After update on Passenger
-for each row 
-BEGIN
-update car SET seatID = NEW.seatID where accountID = NEW.accountID;
-END;
 
 DROP TRIGGER IF EXISTS InsertCarTrigger;
 CREATE TRIGGER InsertCarTrigger
