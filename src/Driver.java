@@ -26,45 +26,113 @@ public class Driver{
         }
         //----------------------------Console------------------------------------------
         boolean run= true;
-        Scanner sc = new Scanner(System.in);
-        System.out.println("-----Welcome to the BTRS Console-----");
-        System.out.println("Enter the opcode and the respective inputs:");
-        System.out.println("   1 <accountID> <password>                                        // Login");
-        System.out.println("   2 <fullName> <email> <password> <creditCard>                    // Sign up");
-        System.out.println("   3 <accountID> <startStdID> <endStID> <seatID> <dateTime>        // Reserve trip");
-        System.out.println("   4 <accountID> <startStdID> <endStID> <seatID> <dateTime>        // Change trip destination");
-        System.out.println("   9 <accountID> <newEmail> <newCreditCard> <password>             // Update user information");
-        System.out.println("   10 <accountID> <fullName> <email> <creditCard> <newPassword>    // Update new password");
-        System.out.println("   11 <accountID>                                                  // Ban accountID");
-        System.out.println("   12 <deptDateTime> <isFull>                            		   // Add new train");
-        System.out.println("   13 <name> <order>                                   			   // Add new station");
-        System.out.println("   14 <accountID>                                                  // Remove ban");
-        System.out.println("   15 <accountID> <wifi>                                           // Update wifi");
-        System.out.println("   16                                            // View Passengers (Admin)");
-        System.out.println("   17 Quit");
+       // System.out.println("   3 <accountID> <startStdID> <endStID> <seatID> <dateTime>        // Reserve trip");
+        //System.out.println("   4 <accountID> <startStdID> <endStID> <seatID> <dateTime>        // Change trip destination");
+       // System.out.println("   11 <accountID>                                                  // Ban accountID");
+        //System.out.println("   12 <deptDateTime> <isFull>                            		   // Add new train");
+        //System.out.println("   13 <name> <order>                                   			   // Add new station");
+        //System.out.println("   14 <accountID>                                                  // Remove ban");
+        //System.out.println("   16                                            // View Passengers (Admin)");
+        //System.out.println("   17 Quit");
         int opcode=0;
-    
+        System.out.println("-----Welcome to the BTRS Console-----");
         while(run){
+        		Scanner sc = new Scanner(System.in); 
+            System.out.println("Enter the opcode or 0 to quit:");
+            System.out.println("	1  Login");
+            System.out.println("	2  Register for an Account");
+            System.out.println("	3  Reserve without Account");
+            System.out.println("	4  Admin login");
+            System.out.println("	5  Retrieve Account Number");
             System.out.print("Input: ");    
             try{
                 opcode = Integer.parseInt(sc.next());
                 switch(opcode){
                     case 1:
+                    	   System.out.println("Enter below: <accountID> <Password>");
+                    	   
                         int accountID1= Integer.parseInt(sc.next()) ;
+                        //System.out.print(accountID1);
                         String password1 = sc.next();
+                        //System.out.print(password1);
                         boolean success1= login(accountID1,password1);
                         if(success1)
-                            System.out.println("-----Login Successful!-----");
+                        {
+                            System.out.println("\n -----Login Successful!-----");
+                        	   System.out.println("1 Reserve Trip");
+                        	   System.out.println("2 Update user information");
+                        	   System.out.println("3 Change trip destination");
+                        	   System.out.println("4 Change Password");
+                        	   System.out.println("5 Purchase Wifi");
+                        	   try {
+                        		   opcode = Integer.parseInt(sc.next());
+                        		   switch(opcode)
+                        		   {
+                        		   case 1:
+                        			   //Show all possible trains avaliable and then tell user to select which one
+                        			   break;
+                        		   case 2:
+                        			   System.out.println("Enter: <newEmail> <newCreditCard>");
+                        			   String email2 = sc.next();
+                                    int creditcard2 = Integer.parseInt(sc.next());
+                                    boolean success9 = updateAccount(accountID1,email2,creditcard2,password1);
+                                    if(success9) {
+                                        System.out.println("-----Update Account Successful!-----");
+                                        break;
+                                    }
+                                    else 
+                                        System.out.println("-----Update Account Failed!-----");
+                                    break;
+                        		   case 3:
+                        			   //show possible train times to allow user to update 
+                        			   break;
+                        		   case 4:
+                        			   System.out.println("Enter: <oldPassword> <newPassword>");
+                        			   String oldPassword = sc.next();
+                        			   String newPassword = sc.next();
+                        			   if(oldPassword.equals(password1)) {
+                        				   boolean success4 = updatePassword(accountID1,newPassword);
+                                           if(success4) {
+                                               System.out.println("-----Update Password Successful!-----");
+                                           	  break;  }
+                                           else 
+                                               System.out.println("-----Update Password Failed!-----");
+                                           break;   
+                        			   }
+                        		   case 5:
+                        			   boolean wifi=sc.nextBoolean();
+                        			   boolean success15 =wifiUpdate(accountID1,wifi);
+                        			   if(success15)
+                                         System.out.println("-----Successful Purchased Wifi!-----");
+                        			   else 
+                        				    System.out.println("-----Update WIFI Failed!-----");
+                        			   break;
+                        			   
+
+                        					   
+                        		   }
+                        		   
+                        	   } catch(Exception e){
+                                   System.out.println("-----Not a Valid Command!-----");   
+                                   System.exit(0);
+                               }
+                        	  
+                        	   
+                        }
                         else 
                             System.out.println("-----Login Failed!-----");
-                        break;
+                        	   break;
                     case 2:
-                        String fullName2=sc.next();
-                        String email2 = sc.next();
-                        String password2=sc.next();
-                        int creditCard2= Integer.parseInt(sc.next());
-                        boolean success2 = signUp(fullName2,email2,password2,creditCard2);
+                        System.out.println("Enter: <First Name> <Last Name> <email> <password> <Credit Card #>");
+                        String firstName=sc.next();
+                        String lastName = sc.next();
+                        String email = sc.next();
+                        String password =sc.next();
+                        String creditCard = sc.next();
+                        System.out.println(creditCard);
+                        boolean success2 = signUp(firstName,lastName, email,password,creditCard);
                         if(success2)
+         
                             System.out.println("-----Sign Up Successful!-----");
                         else 
                             System.out.println("-----Sign Up Failed!-----");
@@ -119,18 +187,6 @@ public class Driver{
                         else 
                             System.out.println("-----Update Account Failed!-----");
                         break;
-                    case 10:
-                        int accountID10 = Integer.parseInt(sc.next());
-                        String fullName10 = sc.next();
-                        String email10 = sc.next();
-                        int creditCard10 = Integer.parseInt(sc.next());
-                        String newpassword10 = sc.next();
-                        boolean success10 = updatePassword(accountID10,fullName10,email10,creditCard10,newpassword10);
-                        if(success10)
-                            System.out.println("-----Update Password Successful!-----");
-                        else 
-                            System.out.println("-----Update Password Failed!-----");
-                        break;
                     case 11:
                         int accountID11= Integer.parseInt( sc.next());
                         boolean success11 = banCustomer(accountID11);
@@ -166,15 +222,7 @@ public class Driver{
                         else 
                             System.out.println("-----Remove Ban Failed!-----");
                         break;
-                    case 15:
-                        int accountID15 = Integer.parseInt(sc.next());
-                        boolean wifi=sc.nextBoolean();
-                        boolean success15 =wifiUpdate(accountID15,wifi);
-                        if(success15)
-                            System.out.println("-----Update WIFI Successful!-----");
-                        else 
-                            System.out.println("-----Update WIFI Failed!-----");
-                        break;
+                     
                     case 16:
                         //int accountID16 = Integer.parseInt(sc.next());
                         ResultSet success16 =currentPassengers();
@@ -183,7 +231,7 @@ public class Driver{
                         else 
                             System.out.println("-----Update WIFI Failed!-----");
                         break;
-                    case 17:
+                    case 0:
                         System.out.println("-----Bye!-----");
                         run=false;
                         break;
@@ -216,7 +264,7 @@ public class Driver{
             String code = "select *"
                         + "from Account_Holder \n"
                         + "where accountID ="+accountID
-                        +" and password = '"+ password +"' ";
+                        +" and password = "+ password;
                       
             ResultSet hasResults =statement.executeQuery(code);
             if(hasResults.first() )
@@ -228,19 +276,37 @@ public class Driver{
         return false;
     }
     // Functional requirement 2
-    public static boolean signUp(String fullName,String email,String password,int creditCard ){
+    public static Boolean signUp(String firstName,String lastName, String email,String password,String creditCard ){
         PreparedStatement preparedstatement=null;
+        PreparedStatement getID=null;
         try{
-            String code= "INSERT INTO Account_Holder(fullName,email,password,creditCard) "
-                    +    "values(?,?,?,?);  ";
+            String code= "INSERT INTO Account_Holder(firstName,lastName, email,password,creditCard) "
+                    +    "values(?,?,?,?,?);  ";
             preparedstatement=connection.prepareStatement(code);
-            preparedstatement.setString(1, fullName);
-            preparedstatement.setString(2, email);
-            preparedstatement.setString(3, password);
-            preparedstatement.setInt(4, creditCard);
+            
+            preparedstatement.setString(1, firstName);
+            preparedstatement.setString(2, lastName);
+            preparedstatement.setString(3, email);
+            preparedstatement.setString(4, password);
+            preparedstatement.setString(5, creditCard);
             int hasChanged = preparedstatement.executeUpdate();
-            if(hasChanged ==1)
+            if(hasChanged == 1) {
+            		String returnAccountID = "Select accountID from Account_Holder where "
+            				+ "firstName = ? and lastName =? and email= ? and password = ? and creditCard = ? ";
+            		getID=connection.prepareStatement(returnAccountID);
+            		getID.setString(1, firstName);
+            		getID.setString(2, lastName);
+            		getID.setString(3, email);
+            		getID.setString(4, password);
+            		getID.setString(5, creditCard);
+                ResultSet result = getID.executeQuery();
+                int accountID = 0;
+                while (result.next()) {
+                 accountID = result.getInt("accountID");
+                }
+                System.out.println("Your Account ID is: " + accountID);
                 return true;
+            }
         }catch(Exception e){
             e.printStackTrace();
             return false;
@@ -359,18 +425,15 @@ public class Driver{
     }
     
     // Functional requirement 10
-    public static boolean updatePassword(int accountID,String fullName,String email,int creditCard, String newPassword ){
+    public static boolean updatePassword(int accountID, String newPassword ){
         PreparedStatement preparedstatement = null;
         try{
             String code = "Update Account_Holder "
                          +"Set password = ?"
-                         +"where accountID = ? and fullName= ? and creditCard = ? and email=?";
+                         +"where accountID = ?";
             preparedstatement = connection.prepareStatement(code);
             preparedstatement.setString(1,newPassword);
             preparedstatement.setInt(2,accountID);
-            preparedstatement.setString(3,fullName);
-            preparedstatement.setInt(4,creditCard);
-            preparedstatement.setString(5,email);
             int hasChanged = preparedstatement.executeUpdate();
             if(hasChanged==1)
                 return true;
@@ -499,6 +562,30 @@ public class Driver{
         //return hasResults; 
 		return null;
     }
+    
+//    //Functional Requirement 17: Admin view to see the passengers and projected train and ride
+//    public static ResultSet currentPassengers() {
+//    	Statement statement= null;
+//        try {
+//        	statement = connection.createStatement();
+//            String code = "SELECT accountID, carNumber FROM Passenger, Car"
+//            		+ " where Passenger.passengerID = Car.passengerID";
+//            
+//            ResultSet hasResults =statement.executeQuery(code);
+//            
+//            System.out.println("this is here " + hasResults.first());
+//            if(hasResults.first() )
+//                return hasResults;
+//            
+//        }catch(Exception e) {
+//            e.printStackTrace();
+//            return null;
+//        }
+//        //return hasResults; 
+//		return null;
+//    }
+    
+    
     
     
     

@@ -6,10 +6,11 @@ USE BTRS;
 DROP TABLE IF EXISTS Account_Holder; 
 CREATE TABLE Account_Holder(
 accountID INT AUTO_INCREMENT,
-fullName VARCHAR(50), 
+firstName VARCHAR(50), 
+lastName VARCHAR(50),
 email VARCHAR(30),
 password VARCHAR(30), 
-creditCard INT,
+creditCard VARCHAR(30),
 UNIQUE KEY(email),
 PRIMARY KEY(accountID)
 );
@@ -161,7 +162,7 @@ CREATE TRIGGER CarNoFullTrigger
 DELIMITER ;
 
 
-LOAD DATA LOCAL INFILE '/Users/Grewal/Documents/SJSU/Fall 2017/CS157A/btrs/data/account_holders.txt' INTO TABLE Account_Holder(fullName,email,password,creditCard);
+LOAD DATA LOCAL INFILE '/Users/Grewal/Documents/SJSU/Fall 2017/CS157A/btrs/data/account_holders.txt' INTO TABLE Account_Holder(firstName, lastName,email,password,creditCard);
 LOAD DATA LOCAL INFILE '/Users/Grewal/Documents/SJSU/Fall 2017/CS157A/btrs/data/passengers.txt' INTO TABLE Passenger(accountID,endStId,wifi);
 LOAD DATA LOCAL INFILE '/Users/Grewal/Documents/SJSU/Fall 2017/CS157A/btrs/data/trains.txt' INTO TABLE Train(deptTime);
 LOAD DATA LOCAL INFILE '/Users/Grewal/Documents/SJSU/Fall 2017/CS157A/btrs/data/stations.txt' INTO TABLE Station(name,orderNumber);
