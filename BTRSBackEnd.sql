@@ -97,14 +97,22 @@ DELIMITER;
 
 
 #if a person is passenger and they are banned they will be removed
-DROP Trigger if exists Passenger;
-CREATE Trigger Passenger
+DROP Trigger if exists PassengerRemoval;
+CREATE Trigger PassengerRemoval
 After insert on Banned 
 for each row
 BEGIN
 delete from Passenger where new.accountID = accountID;
 END;
 
+#update on account holder trip to change in seat in car table
+DROP Trigger if exists updateOnACTTrip;
+CREATE Trigger updateOnACTTrip
+After update on Passenger
+for each row 
+BEGIN
+update car SET seatID = NEW.seatID where accountID = NEW.accountID;
+END;
 
 DROP TRIGGER IF EXISTS InsertCarTrigger;
 CREATE TRIGGER InsertCarTrigger

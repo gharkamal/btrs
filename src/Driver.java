@@ -26,7 +26,6 @@ public class Driver{
         }
         //----------------------------Console------------------------------------------
         boolean run= true;
-       // System.out.println("   3 <accountID> <startStdID> <endStID> <seatID> <dateTime>        // Reserve trip");
         //System.out.println("   4 <accountID> <startStdID> <endStID> <seatID> <dateTime>        // Change trip destination");
        // System.out.println("   11 <accountID>                                                  // Ban accountID");
         //System.out.println("   12 <deptDateTime> <isFull>                            		   // Add new train");
@@ -107,8 +106,31 @@ public class Driver{
                                     else 
                                         System.out.println("-----Update Account Failed!-----");
                                     break;
-                        		   case 3:
-                        			   //show possible train times to allow user to update 
+                        		   case 3: //Change Trip times
+                        			   boolean check = checkIfAccIsPass(accountID1);
+                        			   if( check == true) {
+	                        			   showPossibleTripTimes(); //show user all the possible trip times                
+		                    	    		   System.out.println("Input desired TrainID: <TrainID> ");
+		                    	    		   int trainIDSelected1 = sc.nextInt();  //store TrainID here that user selects
+		                    			   //Show all possible trains avaliable and then tell user to select which one
+		                    	    		   System.out.println("\n");
+		                    	    		   showPossibleStation();
+		                    	    		   System.out.println("Input desired Stop Station: <StationID> ");                     	    		  
+		                    	    		   int stopStation1 = sc.nextInt();   //only gets first token if more than one word                      	    		  
+		                    	    		   Boolean seatCheck1 = showPossibleSeat(trainIDSelected1);
+		                    	    		   String seatSelected1 = "";
+		                    	    		   if(seatCheck1 == true)
+		                    	    		   {
+		                    	    			   System.out.println("Input Desired Seat: ");
+		                    	    			   seatSelected1 = sc.next();
+		                    	    		   }
+		                    	    		   else {
+		                    	    			   break;
+		                    	    		   }
+		                    	    		   updateTrip(accountID1, stopStation1, seatSelected1);
+                        			   } else {
+                        				   System.out.println("Please make a reservation First");
+                        			   }
                         			   break;
                         		   case 4:
                         			   System.out.println("Enter: <oldPassword> <newPassword>");
@@ -146,7 +168,7 @@ public class Driver{
                         else 
                             System.out.println("-----Login Failed!-----");
                         	   break;
-                    case 2:
+                    case 2: //Register for Account
                         System.out.println("Enter: <First Name> <Last Name> <email> <password> <Credit Card #>");
                         String firstName=sc.next();
                         String lastName = sc.next();
@@ -160,30 +182,45 @@ public class Driver{
                         else 
                             System.out.println("-----Sign Up Failed!-----");
                         break;
-//                    case 3:
-//                        int accountID3= Integer.parseInt(sc.next());
-//                        int startstdID3 =Integer.parseInt(sc.next()) ;
-//                        int endstID3=Integer.parseInt(sc.next());
-//                        int seatID3 =Integer.parseInt( sc.next());
-//                        String dateTime3= sc.next();
-//                       // boolean success3 = reserveTrip(accountID3,startstdID3,endstID3,seatID3,dateTime3);
-//                        if(success3)
-//                            System.out.println("-----Reserve Successful!-----");
+                    case 3://3  Reserve without Account
+                    	   showPossibleTripTimes(); //show user all the possible trip times                
+	                    System.out.println("Input desired TrainID: <TrainID> ");
+	                    int trainIDSelected = sc.nextInt();  //store TrainID here that user selects
+	                     //Show all possible trains avaliable and then tell user to select which one
+	      	    		   System.out.println("\n");
+	      	    		   showPossibleStation();
+	      	    		   System.out.println("Input desired Stop Station: <StationID> ");                     	    		  
+	      	    		   int stopStation = sc.nextInt();   //only gets first token if more than one word                      	    		  
+	      	    		   Boolean seatCheck = showPossibleSeat(trainIDSelected);
+	      	    		   String seatSelected = "";
+	      	    		   if(seatCheck == true)
+	      	    		   {
+	      	    			   System.out.println("Input Desired Seat: ");
+	      	    			   seatSelected = sc.next();
+	      	    		   }
+	      	    		   else {
+	      	    			   break;
+	      	    		   }
+	                  boolean success3 = reserveTrip(0,stopStation,seatSelected, false);
+	                  if(success3)
+	                       System.out.println("-----Reservation Successful!-----");
+	                  else {
+	                       System.out.println("-----Reservation Failed!-----");
+	                       break;
+	                  }
+	      			  break;
+//                    case 4: 
+//                        int accountID4= Integer.parseInt(sc.next());
+//                        int startstdID4 =Integer.parseInt(sc.next());
+//                        int endstID4=Integer.parseInt(sc.next());
+//                        int seatID4 = Integer.parseInt(sc.next());
+//                        String dateTime4= sc.next();
+//                        boolean success4 = updateTrip(accountID4,startstdID4,endstID4,seatID4,dateTime4);
+//                        if(success4)
+//                            System.out.println("-----Update Reserve Successful!-----");
 //                        else 
-//                            System.out.println("-----Reserve Failed!-----");
+//                            System.out.println("-----Update Reserve Failed!-----");
 //                        break;
-                    case 4:
-                        int accountID4= Integer.parseInt(sc.next());
-                        int startstdID4 =Integer.parseInt(sc.next());
-                        int endstID4=Integer.parseInt(sc.next());
-                        int seatID4 = Integer.parseInt(sc.next());
-                        String dateTime4= sc.next();
-                        boolean success4 = updateTrip(accountID4,startstdID4,endstID4,seatID4,dateTime4);
-                        if(success4)
-                            System.out.println("-----Update Reserve Successful!-----");
-                        else 
-                            System.out.println("-----Update Reserve Failed!-----");
-                        break;
                     case 5:
                         break;
                     case 6:
@@ -338,6 +375,25 @@ public class Driver{
         
     }
     
+    //check if account holder is a passenger
+    public static boolean checkIfAccIsPass(int accountID)
+    {
+    	 Statement statement = null;
+         try{
+             statement = connection.createStatement();
+             String code = "select *"
+                         + "from passenger "
+                         + "where accountID ="+accountID;      
+             ResultSet hasResults =statement.executeQuery(code);
+             if(hasResults.first() )
+                 return true;
+         }catch(Exception e){
+             e.printStackTrace();
+             return false;
+         }
+         return false;
+    }
+    
     //allow user to see all possible trips from SF to select right one
     public static void showPossibleTripTimes()
     {
@@ -428,7 +484,7 @@ public class Driver{
             if(hasChanged ==1) {
             	PreparedStatement seater =null;
             		String seatSet = "UPDATE Car SET passengerID = "
-            				+ "(select passengerID from Passenger where accountID = ? and endStID = ?)"
+            				+ "(SELECT passengerID from Passenger where accountID = ? and endStID = ?)"
             				+ "WHERE seatID = ? ";
             		seater=connection.prepareStatement(seatSet);
             		seater.setInt(1, accountID);
@@ -436,7 +492,20 @@ public class Driver{
             		seater.setString(3, seatID);
                  int hasChanged1 = seater.executeUpdate();
                  if(hasChanged1 ==1) {
-                	 return true;
+                	 PreparedStatement passenger =null;
+                    	String passengerID = "SELECT passengerID from Car,Passenger"
+                    			+ " where Car.accountID =  ? and endStID = ? and seatID =? ";  /// FIX this
+                    	passenger=connection.prepareStatement(passengerID);
+                    	passenger.setInt(1, accountID);
+                    	passenger.setInt(2, endStID);
+                    	passenger.setString(3, seatID);
+                    	ResultSet hasChanged2 = passenger.executeQuery();
+                    	
+                    	if(hasChanged2.next()) {
+                    		String passID = hasChanged2.getString("passengerID");
+                    		System.out.println("Your Passenger ID is: " + passID);
+                    		return true;
+                    	}
                  }
                 return true;
             }
@@ -448,22 +517,21 @@ public class Driver{
         
     }
 
-    //Functional requirement 4: Change/update train destination: Update a trip destination.
-    public static boolean updateTrip(int accountID, int startStID, int endStID, int seatID, String dateTime)
+    //Functional requirement 4: Change/update train destination: Update a trip destination.  FOR ACCOUNT HOLDER
+    public static boolean updateTrip(int accountID, int endStID, String seatSelected1)
     {
         PreparedStatement preparedstatement=null;
         try{
             String code = "UPDATE Passenger "
-                         + "SET startStID = ?, endStID = ?, dateTime = ?,seatID = ? \n"
+                         + "SET endStID = ?, seatID = ? "
                          +"WHERE accountID = ?";
             preparedstatement=connection.prepareStatement(code);
-            preparedstatement.setInt(1, startStID );
-            preparedstatement.setInt(2, endStID);
-            preparedstatement.setString(3, dateTime);
-            preparedstatement.setInt(4, seatID);
-            preparedstatement.setInt(5, accountID);
+            preparedstatement.setInt(1, endStID);
+            preparedstatement.setString(2, seatSelected1);
+            preparedstatement.setInt(3, accountID);
             int hasChanged = preparedstatement.executeUpdate();
             if(hasChanged ==1)
+            		
                 return true;
         }catch(Exception e){
             e.printStackTrace();
@@ -672,29 +740,7 @@ public class Driver{
         //return hasResults; 
 		return null;
     }
-    
-//    //Functional Requirement 17: Admin view to see the passengers and projected train and ride
-//    public static ResultSet currentPassengers() {
-//    	Statement statement= null;
-//        try {
-//        	statement = connection.createStatement();
-//            String code = "SELECT accountID, carNumber FROM Passenger, Car"
-//            		+ " where Passenger.passengerID = Car.passengerID";
-//            
-//            ResultSet hasResults =statement.executeQuery(code);
-//            
-//            System.out.println("this is here " + hasResults.first());
-//            if(hasResults.first() )
-//                return hasResults;
-//            
-//        }catch(Exception e) {
-//            e.printStackTrace();
-//            return null;
-//        }
-//        //return hasResults; 
-//		return null;
-//    }
-    
+
     
     
     
