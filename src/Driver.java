@@ -202,12 +202,17 @@ public class Driver{
 	      	    			   break;
 	      	    		   }
 	                  boolean success3 = reserveTrip(0,stopStation,seatSelected, false);
-	                  if(success3)
+	                  if(success3) {
 	                       System.out.println("-----Reservation Successful!-----");
+	                  	  ResultSet id = getPassengerID(0, stopStation, seatSelected );
+	                  	 
+	                  	  
+	                  }
 	                  else {
 	                       System.out.println("-----Reservation Failed!-----");
 	                       break;
-	                  }
+	                   }
+	                  
 	      			  break;
 //                    case 4: 
 //                        int accountID4= Integer.parseInt(sc.next());
@@ -538,24 +543,46 @@ public class Driver{
             return false;
         }
     }
-
-      //Functional Requirment 5: Change train time: Update a trip time.
     
-    public static ResultSet getPassengerID(int accountID, int endStrID)
+    public static ResultSet getPassengerID(int accountID, int endStrID, String seatID)
     {
     		PreparedStatement statement = null;
-        try{
-            String code = "select passengerID from passenger where accountID =  ?";
-            statement = connection.prepareStatement(code);
-            statement.setInt(1, accountID);  
-            ResultSet hasResults =statement.executeQuery();
-            if(hasResults.next() )
-                return hasResults;
-        }catch(Exception e){
-            e.printStackTrace();
-            return null;
-        }
-        return null;
+    		if(accountID != 0)
+    		{
+	        try{
+	            String code = "select passengerID from passenger where accountID =  ?";
+	            statement = connection.prepareStatement(code);
+	            statement.setInt(1, accountID);  
+	            ResultSet hasResults =statement.executeQuery();
+	            if(hasResults.next() )
+	                return hasResults;
+	        }catch(Exception e){
+	            e.printStackTrace();
+	            return null;
+	        }
+    		}
+    		else {
+    			//if passenger doesn't have an account 
+    			try{
+    				
+    	            String code = "select passengerID from passenger where accountID =  0 and passengerID ="
+    	            		+ " (select passengerID from car where seatID = ? and trainID = ?) ";
+    	            statement = connection.prepareStatement(code);
+    	            statement.setString(1, seatID); 
+    	            statement.setInt(2, endStrID); 
+    	            ResultSet hasResults =statement.executeQuery();
+    	            int passID = 0;
+                	  while(hasResults.next())
+                	  {
+                		  passID = hasResults.getInt("passengerID");
+                	  }
+                	  System.out.println("Your passenger ID #: " + passID);
+    	        }catch(Exception e){
+    	            e.printStackTrace();
+    	            return null;
+    	        }		
+    		}
+    		return null;
     }
     
     public static boolean setOldSeatNull(int accountID)
@@ -581,7 +608,7 @@ public class Driver{
         PreparedStatement preparedstatement=null;
         try{
         		int passengerID = 0;
-        		ResultSet id = getPassengerID(accountID, endStID);
+        		ResultSet id = getPassengerID(accountID, endStID, null);
         		while(id.next()) {
         			passengerID = id.getInt("passengerID");
         		}
