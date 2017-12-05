@@ -54,7 +54,7 @@ public class Driver{
                         //System.out.print(accountID1);
                         String password1 = sc.next();
                         //System.out.print(password1);
-                        boolean success1= login(accountID1,password1);
+                        boolean success1= login(accountID1,password1, false);
                         if(success1)
                         {
                             System.out.println("\n -----Login Successful!-----");
@@ -191,6 +191,11 @@ public class Driver{
                             System.out.println("-----Sign Up Failed!-----");
                         break;
                     case 3://3  Reserve without Account
+                    	   System.out.println("Enter: <First Name> <Last Name> <Credit Card #>");
+                    	   String firstNameWO = sc.next();
+                    	   String lastNameWO = sc.next();
+                    	   long creditCardWO = sc.nextLong();
+                    	   
                     	   showPossibleTripTimes(); //show user all the possible trip times                
 	                    System.out.println("Input desired TrainID: <TrainID> ");
 	                    int trainIDSelected = sc.nextInt();  //store TrainID here that user selects
@@ -239,9 +244,65 @@ public class Driver{
 //                        else 
 //                            System.out.println("-----Update Reserve Failed!-----");
 //                        break;
-                    case 5:
+	      			  
+                    case 4: //admin 
+                    	   System.out.println("Enter Admin Login: <AccountID> <password>");
+                    	   int accountID= Integer.parseInt(sc.next()) ;
+                           //System.out.print(accountID1);
+                           String passw = sc.next();
+                           //System.out.print(password1);
+                           boolean success = login(accountID,passw, true);
+                           if(success)
+                           {
+                               System.out.println("\n -----Login Successful!-----");
+                               System.out.println("1 Ban Account Holder");
+                               System.out.println("2 Remove Ban");
+                        	   	  System.out.println("3 Average Ages");
+                        	   	  System.out.println("4 passengers under 18");
+                        	   	  System.out.println("5 All passengers going to LA");
+                        	      try{
+                                      opcode = Integer.parseInt(sc.next());
+                                      switch(opcode){
+                                      	case 1:
+                                      		break;
+                                      	case 2:
+                                      		break;
+                                      	case 3:
+                                      		break;
+                                      	case 4:
+                                      		break;
+                                      	case 5:
+                                      		break;
+                                      		
+                                      
+                                      
+ 
+                                      
+                                      }
+                        	      } catch(Exception e){
+                                      System.out.println("-----Not a Valid Command!-----");   
+                                      System.exit(0);
+                                  }
+                           }
+                           else {
+                        	   	System.out.println("\n -----Login Failed!-----");
+                        	   	
+                           }
                         break;
-                    case 6:
+                    case 5: //recover account ID number 
+                    		System.out.println("Enter <first Namae> <last Name> <Email> <password> : ");
+                    		String firstN = sc.next();
+                    		String lastN = sc.next();
+                    		String email2 = sc.next();
+                    		String passwor = sc.next();
+                    		int valid = recoverAccountID(firstN, lastN, email2, passwor);
+                    		if(valid != 0)
+                    		{
+                    			System.out.println("Your accountID is: " + valid);
+                    		}
+                    		else {
+                    			System.out.println("You are not an account Holder. Please Register");
+                    		}
                         break;
 //                    case 7:
 //                        int accountID7=Integer.parseInt(sc.next());
@@ -335,16 +396,28 @@ public class Driver{
         
     }
     // Functional requirement 1
-    public static boolean login(int accountID,String password){
+    public static boolean login(int accountID,String password, Boolean admin){
         Statement statement = null;
+        ResultSet hasResults = null;
         try{
+        	if(admin == false)
+        	{
             statement = connection.createStatement();
             String code = "select *"
                         + "from Account_Holder \n"
                         + "where accountID ="+accountID
-                        +" and password = "+ password;
+                        +" and password = "+ password ;
                       
-            ResultSet hasResults =statement.executeQuery(code);
+             hasResults =statement.executeQuery(code);
+        	}else {
+        		statement = connection.createStatement();
+                String code = "select *"
+                            + "from Account_Holder \n"
+                            + "where accountID ="+accountID
+                            +" and password = "+ password + " and admin = true";
+                          
+                 hasResults =statement.executeQuery(code);
+        	}
             if(hasResults.first() )
                 return true;
         }catch(Exception e){
@@ -669,6 +742,31 @@ public class Driver{
             return false;
         }
         return false;
+    }
+    
+    //Recover Account ID
+    public static int recoverAccountID(String firstN,String lastN, String email2, String passwor)
+    {
+    		PreparedStatement preparedstatement=null;
+    		  try{
+    			  String code = "select accountID from account_Holder where firstName = ? and"
+    					  + " lastName = ? and email = ? and password = ?";
+    			  preparedstatement = connection.prepareStatement(code);
+    	           preparedstatement.setString(1,firstN);
+    	           preparedstatement.setString(2,lastN);
+    	           preparedstatement.setString(3,email2);
+    	           preparedstatement.setString(4,passwor);
+    	           
+    	           ResultSet result = preparedstatement.executeQuery();
+    	           if(result.next())
+    	           {
+    	        	   	return result.getInt("accountID");
+    	           }
+    		  }catch(Exception e){
+    	            e.printStackTrace();
+    	            return 0;
+    		  }
+    		return 0;
     }
 
     //Requirement 8: Delete reservation:   Delete   a   trip.
