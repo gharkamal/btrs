@@ -75,7 +75,8 @@ public class Driver{
                         	    		   System.out.println("\n");
                         	    		   showPossibleStation();
                         	    		   System.out.println("Input desired Stop Station: <StationID> ");                     	    		  
-                        	    		   int stopStation = sc.nextInt();   //only gets first token if more than one word                      	    		  
+                        	    		   int stopStation = sc.nextInt();   //only gets first token if more than one word 
+                        	    		  // int carID = showPossibleCars(trainIDSelected);
                         	    		   Boolean seatCheck = showPossibleSeat(trainIDSelected);
                         	    		   String seatSelected = "";
                         	    		   if(seatCheck == true)
@@ -444,6 +445,13 @@ public class Driver{
             }   
     }
     
+    
+//    public static int showPossibleCars(int trainID)
+//    {
+//    		PreparedStatement  preparedstateent
+//    		return 1;
+//    }
+//    
     //Find available seat
     public static boolean showPossibleSeat(int trainID)
     {

@@ -11,10 +11,13 @@ lastName VARCHAR(50),
 email VARCHAR(30),
 password VARCHAR(30), 
 creditCard VARCHAR(30),
+age INT, 
+admin boolean,
 UNIQUE KEY(email),
 PRIMARY KEY(accountID)
 );
 ALTER TABLE Account_holder AUTO_INCREMENT=1000;
+
 
 DROP TABLE IF EXISTS Passenger;
 CREATE TABLE Passenger(
@@ -43,6 +46,7 @@ stationID INT PRIMARY KEY AUTO_INCREMENT,
 name VARCHAR(64),
 orderNumber INT
 ) AUTO_INCREMENT = 1000;
+
 
 
 # Cars, I believe are initially empty.
@@ -75,7 +79,6 @@ BEGIN
 END//
 DELIMITER ;
 
-
 DROP PROCEDURE IF EXISTS checkValidUpdate;
 DELIMITER //
 CREATE PROCEDURE checkValidUpdate(
@@ -92,32 +95,35 @@ CREATE PROCEDURE checkValidUpdate(
     END IF;
   END;
 //
-DELIMITER;
+DELIMITER ;
 
 
 #if a person is passenger and they are banned they will be removed
 DROP Trigger if exists PassengerRemoval;
+delimiter //
 CREATE Trigger PassengerRemoval
 After insert on Banned 
 for each row
 BEGIN
 delete from Passenger where new.accountID = accountID;
-END;
-
+END; //
+delimiter ;
 
 DROP TRIGGER IF EXISTS InsertCarTrigger;
+delimiter //
 CREATE TRIGGER InsertCarTrigger
   BEFORE INSERT ON Car
   FOR EACH ROW
-  CALL checkValidUpdate(NEW.seatID, NEW.carNumber, NEW.trainID);
-
+  CALL checkValidUpdate(NEW.seatID, NEW.carNumber, NEW.trainID); //
+  delimiter ;
 
 DROP TRIGGER IF EXISTS UpdateCarTrigger;
+delimiter //
 CREATE TRIGGER UpdateCarTrigger
   BEFORE UPDATE ON Car
   FOR EACH ROW
-  CALL checkValidUpdate(NEW.seatID, NEW.carNumber, NEW.trainID);
-
+  CALL checkValidUpdate(NEW.seatID, NEW.carNumber, NEW.trainID);//
+  delimiter ;
 
 # 224 is the total number of seats in each train.
 DROP TRIGGER IF EXISTS CarFullTrigger;
@@ -130,7 +136,8 @@ CREATE TRIGGER CarFullTrigger
       UPDATE Train SET isFull = 1 WHERE trainID = NEW.trainID;
     END IF;
   END; //
-
+  
+delimiter ;
 
 DROP TRIGGER IF Exists CarChangeSeatTrigger;
 DELIMITER //
@@ -167,4 +174,6 @@ LOAD DATA LOCAL INFILE '/Users/Grewal/Documents/SJSU/Fall 2017/CS157A/btrs/data/
 LOAD DATA LOCAL INFILE '/Users/Grewal/Documents/SJSU/Fall 2017/CS157A/btrs/data/stations.txt' INTO TABLE Station(name,orderNumber);
 LOAD DATA LOCAL INFILE '/Users/Grewal/Documents/SJSU/Fall 2017/CS157A/btrs/data/cars.txt' INTO TABLE Car(carNumber,seatID,trainID,passengerID);
 LOAD DATA LOCAL INFILE '/Users/Grewal/Documents/SJSU/Fall 2017/CS157A/btrs/data/banned.txt' INTO TABLE Banned(accountID);
+
+
 
