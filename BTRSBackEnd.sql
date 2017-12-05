@@ -24,8 +24,8 @@ CREATE TABLE Passenger(
   passengerID INT AUTO_INCREMENT,
   accountID INT REFERENCES Account_Holder(accountID),
   # startStID INT,
-  endStID INT REFERENCES Station(stationID), 
-   seatID INT,
+  endStID INT REFERENCES Station(stationID),
+  # seatID INT,
   # dateTime date,
   wifi boolean,
   PRIMARY KEY(passengerID)
@@ -168,9 +168,9 @@ FOR EACH ROW
 DELIMITER ;
 
 
-LOAD DATA LOCAL INFILE './data/account_holders.txt' INTO TABLE Account_Holder(firstName, lastName,email,password,creditCard,age);
-LOAD DATA LOCAL INFILE './data/passengers.txt' INTO TABLE Passenger(accountID,endStId,wifi);
-LOAD DATA LOCAL INFILE './data/trains.txt' INTO TABLE Train(deptTime);
-LOAD DATA LOCAL INFILE './data/stations.txt' INTO TABLE Station(name,orderNumber);
-LOAD DATA LOCAL INFILE './data/cars.txt' INTO TABLE Car(carNumber,seatID,trainID,passengerID);
-LOAD DATA LOCAL INFILE './data/banned.txt' INTO TABLE Banned(accountID);
+LOAD DATA LOCAL INFILE '/Users/Grewal/Desktop/btrs-harkamal/data/account_holders.txt' INTO TABLE Account_Holder(firstName, lastName,email,password,creditCard,age);
+LOAD DATA LOCAL INFILE '/Users/Grewal/Desktop/btrs-harkamal/data/passengers.txt' INTO TABLE Passenger(accountID,endStId,wifi);
+LOAD DATA LOCAL INFILE '/Users/Grewal/Desktop/btrs-harkamal/data/trains.txt' INTO TABLE Train(deptTime);
+LOAD DATA LOCAL INFILE '/Users/Grewal/Desktop/btrs-harkamal/data/stations.txt' INTO TABLE Station(name,orderNumber);
+LOAD DATA LOCAL INFILE '/Users/Grewal/Desktop/btrs-harkamal/data/cars.txt' INTO TABLE Car(carNumber,seatID,trainID,passengerID);
+LOAD DATA LOCAL INFILE '/Users/Grewal/Desktop/btrs-harkamal/data/banned.txt' INTO TABLE Banned(accountID);
