@@ -24,8 +24,8 @@ CREATE TABLE Passenger(
   passengerID INT AUTO_INCREMENT,
   accountID INT REFERENCES Account_Holder(accountID),
   # startStID INT,
-  endStID INT REFERENCES Station(stationID),
-  # seatID INT,
+  endStID INT REFERENCES Station(stationID), 
+   seatID INT,
   # dateTime date,
   wifi boolean,
   PRIMARY KEY(passengerID)

@@ -75,8 +75,12 @@ public class Driver{
                         	    		   System.out.println("\n");
                         	    		   showPossibleStation();
                         	    		   System.out.println("Input desired Stop Station: <StationID> ");                     	    		  
-                        	    		   int stopStation = sc.nextInt();   //only gets first token if more than one word                      	    		  
-                        	    		   Boolean seatCheck = showPossibleSeat(trainIDSelected);
+                        	    		   int stopStation = sc.nextInt();   //only gets first token if more than one word 
+                        	    		   possibleCars(trainIDSelected);
+                        	    		   System.out.println("Select Car #: ");
+                        	    		   int carID = sc.nextInt();
+                        	    		   Boolean seatCheck = showPossibleSeat(trainIDSelected, carID);
+                        	    		   
                         	    		   String seatSelected = "";
                         	    		   if(seatCheck == true)
                         	    		   {
@@ -116,8 +120,11 @@ public class Driver{
 		                    	    		   System.out.println("\n");
 		                    	    		   showPossibleStation();
 		                    	    		   System.out.println("Input desired Stop Station: <StationID> ");                     	    		  
-		                    	    		   int stopStation1 = sc.nextInt();   //only gets first token if more than one word                      	    		  
-		                    	    		   Boolean seatCheck1 = showPossibleSeat(trainIDSelected1);
+		                    	    		   int stopStation1 = sc.nextInt();   //only gets first token if more than one word    
+		                    	    		   possibleCars(trainIDSelected1);
+	                        	    		   System.out.println("Select Car #: ");
+	                        	    		   int carID1 = sc.nextInt();
+		                    	    		   Boolean seatCheck1 = showPossibleSeat(trainIDSelected1, carID1);
 		                    	    		   String seatSelected1 = "";
 		                    	    		   if(seatCheck1 == true)
 		                    	    		   {
@@ -127,7 +134,7 @@ public class Driver{
 		                    	    		   else {
 		                    	    			   break;
 		                    	    		   }
-		                    	    		   updateTrip(accountID1, stopStation1, seatSelected1, trainIDSelected1);
+		                    	    		   updateTrip(accountID1, stopStation1, seatSelected1, trainIDSelected1, carID1);
                         			   } else {
                         				   System.out.println("Please make a reservation First");
                         			   }
@@ -190,8 +197,11 @@ public class Driver{
 	      	    		   System.out.println("\n");
 	      	    		   showPossibleStation();
 	      	    		   System.out.println("Input desired Stop Station: <StationID> ");                     	    		  
-	      	    		   int stopStation = sc.nextInt();   //only gets first token if more than one word                      	    		  
-	      	    		   Boolean seatCheck = showPossibleSeat(trainIDSelected);
+	      	    		   int stopStation = sc.nextInt();   //only gets first token if more than one word 
+	      	    		   possibleCars(trainIDSelected);
+	      	    		   System.out.println("Select Car #: ");
+	      	    		   int carID = sc.nextInt();
+	      	    		   Boolean seatCheck = showPossibleSeat(trainIDSelected, carID);
 	      	    		   String seatSelected = "";
 	      	    		   if(seatCheck == true)
 	      	    		   {
@@ -204,7 +214,7 @@ public class Driver{
 	                  boolean success3 = reserveTrip(0,stopStation,seatSelected, false);
 	                  if(success3) {
 	                       System.out.println("-----Reservation Successful!-----");
-	                  	  ResultSet id = getPassengerID(0, stopStation, seatSelected );
+	                  	  ResultSet id = getPassengerID(0, stopStation, seatSelected, carID );
 	                  	 
 	                  	  
 	                  }
@@ -380,6 +390,7 @@ public class Driver{
         
     }
     
+    
     //check if account holder is a passenger
     public static boolean checkIfAccIsPass(int accountID)
     {
@@ -421,6 +432,27 @@ public class Driver{
             }   
     }
 
+    
+    //ask user to select car
+    public static void possibleCars(int trainID)
+    {
+    		PreparedStatement preparedstatement=null;
+		try {
+			String code = "select carNumber from Car WHERE trainID = ? group by carNumber";
+			preparedstatement=connection.prepareStatement(code);
+			 preparedstatement.setInt(1, trainID);
+			ResultSet result = preparedstatement.executeQuery();
+			int carID = 0;
+    		   System.out.println("\n Car #");
+    		   while (result.next()) {
+    				carID = result.getInt("CarNumber"); 
+    				System.out.println(carID);
+            }
+		}catch(Exception e){
+            e.printStackTrace();
+            //return null;
+        }   
+    }
 
     //allow user to see all possible Stations from SF to select right one
     public static void showPossibleStation()
@@ -445,14 +477,15 @@ public class Driver{
     }
     
     //Find available seat
-    public static boolean showPossibleSeat(int trainID)
+    public static boolean showPossibleSeat(int trainID, int carID)
     {
     		PreparedStatement preparedstatement=null;
     		try {
-    			String code = "select seatID from Car, Train where Car.trainID = ? and Train.trainID = ?"; //check if seat is null
+    			String code = "select seatID from Car, Train where Car.trainID = ? and Train.trainID = ? and carNumber = ?"; //check if seat is null
     			preparedstatement=connection.prepareStatement(code);
     		    preparedstatement.setInt(1, trainID);
     		    preparedstatement.setInt(2, trainID);
+    		    preparedstatement.setInt(3, carID);
     			ResultSet result = preparedstatement.executeQuery();
     			String seat;
 	    		   
@@ -523,7 +556,7 @@ public class Driver{
     }
 
     //Functional requirement 4: Change/update train destination: Update a trip destination.  FOR ACCOUNT HOLDER
-    public static boolean updateTrip(int accountID, int endStID, String seatSelected1, int trainID)
+    public static boolean updateTrip(int accountID, int endStID, String seatSelected1, int trainID, int carID)
     {
         PreparedStatement preparedstatement=null;
         try{
@@ -536,7 +569,7 @@ public class Driver{
             int hasChanged = preparedstatement.executeUpdate();
             if(hasChanged ==1)
             		setOldSeatNull(accountID);
-            		changeSeat(accountID, seatSelected1, trainID, endStID);
+            		changeSeat(accountID, seatSelected1, trainID, endStID, carID);
                 return true;
         }catch(Exception e){
             e.printStackTrace();
@@ -544,13 +577,13 @@ public class Driver{
         }
     }
     
-    public static ResultSet getPassengerID(int accountID, int endStrID, String seatID)
+    public static ResultSet getPassengerID(int accountID, int endStrID, String seatID, int carID)
     {
     		PreparedStatement statement = null;
     		if(accountID != 0)
     		{
 	        try{
-	            String code = "select passengerID from passenger where accountID =  ?";
+	            String code = "select max(passengerID) from passenger accountID =  ? ";
 	            statement = connection.prepareStatement(code);
 	            statement.setInt(1, accountID);  
 	            ResultSet hasResults =statement.executeQuery();
@@ -604,11 +637,11 @@ public class Driver{
          return false;
     }
     //Requirement 7 : Change   seat:   Update   a   trip   seat.
-    public static boolean changeSeat(int accountID, String updateSeat, int trainID, int endStID){
+    public static boolean changeSeat(int accountID, String updateSeat, int trainID, int endStID, int carID){
         PreparedStatement preparedstatement=null;
         try{
         		int passengerID = 0;
-        		ResultSet id = getPassengerID(accountID, endStID, null);
+        		ResultSet id = getPassengerID(accountID, endStID, null, carID);
         		while(id.next()) {
         			passengerID = id.getInt("passengerID");
         		}
