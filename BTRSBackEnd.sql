@@ -1,48 +1,52 @@
 SET sql_mode='';
-DROP DATABASE IF EXISTS BTRS; 
+DROP DATABASE IF EXISTS BTRS;
 CREATE DATABASE BTRS;
 USE BTRS;
 
-DROP TABLE IF EXISTS Account_Holder; 
+DROP TABLE IF EXISTS Account_Holder;
 CREATE TABLE Account_Holder(
-accountID INT AUTO_INCREMENT,
-firstName VARCHAR(50), 
-lastName VARCHAR(50),
-email VARCHAR(30),
-password VARCHAR(30), 
-creditCard VARCHAR(30),
-UNIQUE KEY(email),
-PRIMARY KEY(accountID)
+  accountID INT AUTO_INCREMENT,
+  firstName VARCHAR(50),
+  lastName VARCHAR(50),
+  email VARCHAR(30),
+  password VARCHAR(30),
+  creditCard VARCHAR(30),
+  age INT,
+  admin BOOLEAN DEFAULT FALSE,
+  UNIQUE KEY(email),
+  PRIMARY KEY(accountID)
 );
 ALTER TABLE Account_holder AUTO_INCREMENT=1000;
 
+
 DROP TABLE IF EXISTS Passenger;
 CREATE TABLE Passenger(
-passengerID INT AUTO_INCREMENT,
-accountID INT REFERENCES Account_Holder(accountID),
-# startStID INT,
-endStID INT REFERENCES Station(stationID),
-# seatID INT,
-# dateTime date,
-wifi boolean,
-PRIMARY KEY(passengerID)
+  passengerID INT AUTO_INCREMENT,
+  accountID INT REFERENCES Account_Holder(accountID),
+  # startStID INT,
+  endStID INT REFERENCES Station(stationID),
+  # seatID INT,
+  # dateTime date,
+  wifi boolean,
+  PRIMARY KEY(passengerID)
 );
 ALTER TABLE Passenger AUTO_INCREMENT=500;
 
 DROP TABLE IF EXISTS Train;
 CREATE TABLE Train(
-trainID INT PRIMARY KEY AUTO_INCREMENT,
-deptTime TIME,
-isFull BOOL DEFAULT FALSE
+  trainID INT PRIMARY KEY AUTO_INCREMENT,
+  deptTime TIME,
+  isFull BOOL DEFAULT FALSE
 ) AUTO_INCREMENT = 100;
 
 
 DROP TABLE IF EXISTS Station;
 CREATE TABLE Station(
-stationID INT PRIMARY KEY AUTO_INCREMENT,
-name VARCHAR(64),
-orderNumber INT
+  stationID INT PRIMARY KEY AUTO_INCREMENT,
+  name VARCHAR(64),
+  orderNumber INT
 ) AUTO_INCREMENT = 1000;
+
 
 
 # Cars, I believe are initially empty.
@@ -50,31 +54,30 @@ orderNumber INT
 # ..will add rows to this relation.
 DROP TABLE IF EXISTS Car;
 CREATE TABLE Car(
-carNumber INT,
-seatID VARCHAR(3),
-trainID INT,
-passengerID INT DEFAULT NULL,
-PRIMARY KEY(carNumber, seatID, trainID),
-FOREIGN KEY(trainID) REFERENCES Train(trainID) ON UPDATE CASCADE ON DELETE CASCADE
+  carNumber INT,
+  seatID VARCHAR(3),
+  trainID INT,
+  passengerID INT DEFAULT NULL,
+  PRIMARY KEY(carNumber, seatID, trainID),
+  FOREIGN KEY(trainID) REFERENCES Train(trainID) ON UPDATE CASCADE ON DELETE CASCADE
 );
 
 
-DROP TABLE IF EXISTS Banned; 
+DROP TABLE IF EXISTS Banned;
 CREATE TABLE Banned(
-accountID INT REFERENCES Account_Holder(accountID) ON UPDATE CASCADE ON DELETE CASCADE,
-PRIMARY KEY(accountID)
+  accountID INT REFERENCES Account_Holder(accountID) ON UPDATE CASCADE ON DELETE CASCADE,
+  PRIMARY KEY(accountID)
 );
 
 DROP PROCEDURE IF EXISTS archivePassengers;
 DELIMITER //
 CREATE PROCEDURE archivePassengers(IN last date)
-BEGIN
-   INSERT INTO archive(passengerID, accountID, startStID ,endStID ,seatID, dateTime, wifi)
-   Select passengerID, accountID, startStID ,endStID ,seatID, dateTime, wifi from Passenger where dateTime <= last;
-   Delete from Passenger where updatedAt <= last;
-END//
+  BEGIN
+    INSERT INTO archive(passengerID, accountID, startStID ,endStID ,seatID, dateTime, wifi)
+      Select passengerID, accountID, startStID ,endStID ,seatID, dateTime, wifi from Passenger where dateTime <= last;
+    Delete from Passenger where updatedAt <= last;
+  END//
 DELIMITER ;
-
 
 DROP PROCEDURE IF EXISTS checkValidUpdate;
 DELIMITER //
@@ -92,51 +95,55 @@ CREATE PROCEDURE checkValidUpdate(
     END IF;
   END;
 //
-DELIMITER;
+DELIMITER ;
 
 
 #if a person is passenger and they are banned they will be removed
 DROP Trigger if exists PassengerRemoval;
+delimiter //
 CREATE Trigger PassengerRemoval
-After insert on Banned 
+After insert on Banned
 for each row
-BEGIN
-delete from Passenger where new.accountID = accountID;
-END;
-
+  BEGIN
+    delete from Passenger where new.accountID = accountID;
+  END; //
+delimiter ;
 
 DROP TRIGGER IF EXISTS InsertCarTrigger;
+delimiter //
 CREATE TRIGGER InsertCarTrigger
-  BEFORE INSERT ON Car
-  FOR EACH ROW
-  CALL checkValidUpdate(NEW.seatID, NEW.carNumber, NEW.trainID);
-
+BEFORE INSERT ON Car
+FOR EACH ROW
+  CALL checkValidUpdate(NEW.seatID, NEW.carNumber, NEW.trainID); //
+delimiter ;
 
 DROP TRIGGER IF EXISTS UpdateCarTrigger;
+delimiter //
 CREATE TRIGGER UpdateCarTrigger
-  BEFORE UPDATE ON Car
-  FOR EACH ROW
-  CALL checkValidUpdate(NEW.seatID, NEW.carNumber, NEW.trainID);
-
+BEFORE UPDATE ON Car
+FOR EACH ROW
+  CALL checkValidUpdate(NEW.seatID, NEW.carNumber, NEW.trainID);//
+delimiter ;
 
 # 224 is the total number of seats in each train.
 DROP TRIGGER IF EXISTS CarFullTrigger;
 DELIMITER //
 CREATE TRIGGER CarFullTrigger
-  AFTER INSERT ON Car
-  FOR EACH ROW
+AFTER INSERT ON Car
+FOR EACH ROW
   BEGIN
     IF (SELECT COUNT(*) FROM Car WHERE trainID = NEW.trainID) = 224 THEN
       UPDATE Train SET isFull = 1 WHERE trainID = NEW.trainID;
     END IF;
   END; //
 
+delimiter ;
 
 DROP TRIGGER IF Exists CarChangeSeatTrigger;
 DELIMITER //
 CREATE TRIGGER CarChangeSeatTrigger
-  AFTER UPDATE ON Car
-  FOR EACH ROW
+AFTER UPDATE ON Car
+FOR EACH ROW
   BEGIN
     IF (SELECT COUNT(*) FROM Car WHERE trainID = NEW.trainID) = 224 THEN
       UPDATE Train SET isFull = 1 WHERE trainID = NEW.trainID;
@@ -151,8 +158,8 @@ DELIMITER ;
 DROP TRIGGER IF EXISTS CarNoFullTrigger;
 DELIMITER //
 CREATE TRIGGER CarNoFullTrigger
-  AFTER DELETE ON Car
-  FOR EACH ROW
+AFTER DELETE ON Car
+FOR EACH ROW
   BEGIN
     IF OLD.trainID IN (SELECT trainID FROM Train WHERE isFull) THEN
       UPDATE Train SET isFull = 0 WHERE trainID = OLD.trainID;
@@ -161,10 +168,9 @@ CREATE TRIGGER CarNoFullTrigger
 DELIMITER ;
 
 
-LOAD DATA LOCAL INFILE '/Users/Grewal/Documents/SJSU/Fall 2017/CS157A/btrs/data/account_holders.txt' INTO TABLE Account_Holder(firstName, lastName,email,password,creditCard);
-LOAD DATA LOCAL INFILE '/Users/Grewal/Documents/SJSU/Fall 2017/CS157A/btrs/data/passengers.txt' INTO TABLE Passenger(accountID,endStId,wifi);
-LOAD DATA LOCAL INFILE '/Users/Grewal/Documents/SJSU/Fall 2017/CS157A/btrs/data/trains.txt' INTO TABLE Train(deptTime);
-LOAD DATA LOCAL INFILE '/Users/Grewal/Documents/SJSU/Fall 2017/CS157A/btrs/data/stations.txt' INTO TABLE Station(name,orderNumber);
-LOAD DATA LOCAL INFILE '/Users/Grewal/Documents/SJSU/Fall 2017/CS157A/btrs/data/cars.txt' INTO TABLE Car(carNumber,seatID,trainID,passengerID);
-LOAD DATA LOCAL INFILE '/Users/Grewal/Documents/SJSU/Fall 2017/CS157A/btrs/data/banned.txt' INTO TABLE Banned(accountID);
-
+LOAD DATA LOCAL INFILE './data/account_holders.txt' INTO TABLE Account_Holder(firstName, lastName,email,password,creditCard,age);
+LOAD DATA LOCAL INFILE './data/passengers.txt' INTO TABLE Passenger(accountID,endStId,wifi);
+LOAD DATA LOCAL INFILE './data/trains.txt' INTO TABLE Train(deptTime);
+LOAD DATA LOCAL INFILE './data/stations.txt' INTO TABLE Station(name,orderNumber);
+LOAD DATA LOCAL INFILE './data/cars.txt' INTO TABLE Car(carNumber,seatID,trainID,passengerID);
+LOAD DATA LOCAL INFILE './data/banned.txt' INTO TABLE Banned(accountID);
