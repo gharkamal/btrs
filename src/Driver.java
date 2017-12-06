@@ -7,6 +7,7 @@ import java.util.Scanner;
 public class Driver{
     
     public static Connection connection;
+    
     public static void main(String[] args){
         connection=null;
         try{
@@ -26,14 +27,8 @@ public class Driver{
         }
         //----------------------------Console------------------------------------------
         boolean run= true;
-        //System.out.println("   4 <accountID> <startStdID> <endStID> <seatID> <dateTime>        // Change trip destination");
-       // System.out.println("   11 <accountID>                                                  // Ban accountID");
-        //System.out.println("   12 <deptDateTime> <isFull>                            		   // Add new train");
-        //System.out.println("   13 <name> <order>                                   			   // Add new station");
-        //System.out.println("   14 <accountID>                                                  // Remove ban");
-        //System.out.println("   16                                            // View Passengers (Admin)");
-        //System.out.println("   17 Quit");
         int opcode=0;
+        
         System.out.println("-----Welcome to the BTRS Console-----");
         while(run){
         		Scanner sc = new Scanner(System.in); 
@@ -222,9 +217,7 @@ public class Driver{
 	                       System.out.println("-----Reservation Successful!-----");
 //	                  	  ResultSet id = getPassengerID(0, stopStation, seatSelected, trainIDSelected, carID );
 //	                  	  System.out.println("Your passenger ID is : " + id);
-	                  	  
-	                  	 
-	                  	  
+
 	                  }
 	                  else {
 	                       System.out.println("-----Reservation Failed!-----");
@@ -264,20 +257,25 @@ public class Driver{
                                       opcode = Integer.parseInt(sc.next());
                                       switch(opcode){
                                       	case 1:
+                                      		System.out.println("<accountID>");
+                                      		int accountID11 = Integer.parseInt(sc.next());
+                                      		banCustomer(accountID11);
                                       		break;
                                       	case 2:
+                                      		System.out.println("<accountID>");
+                                      		int accountID12 = Integer.parseInt(sc.next());
+                                      		removeBan(accountID12);
                                       		break;
                                       	case 3:
+                                      		showAverageAges();
                                       		break;
                                       	case 4:
+                                      		showMinors();
                                       		break;
                                       	case 5:
+                                      		going_to_LA();
                                       		break;
-                                      		
-                                      
-                                      
- 
-                                      
+
                                       }
                         	      } catch(Exception e){
                                       System.out.println("-----Not a Valid Command!-----");   
@@ -395,7 +393,102 @@ public class Driver{
         System.exit(0);
         
     }
-    // Functional requirement 1
+    public static void showAverageAges() {
+    	Statement statement=null;
+    	ResultSet hasResults= null;
+		try{
+			statement= connection.createStatement();
+			String code = " USE BTRS";
+			statement.execute(code);
+			code = " select AVG(age) "
+				  +" from Account_Holder"
+				  +" where age >18 "
+				  +" and EXISTS( select * from Passenger where Passenger.accountID= Account_Holder.accountID )";
+			hasResults=statement.executeQuery(code);
+			hasResults.first();
+			int averageAge= hasResults.getInt("AVG(age)");
+			code = "select MAX(age) "
+				 + "from Account_Holder "
+				 + "where EXISTS( select * from Passenger where Passenger.accountID= Account_Holder.accountID ) ";
+			hasResults=statement.executeQuery(code);
+			hasResults.first();   
+			int oldest = hasResults.getInt("MAX(age)");
+			code = " select MIN(age) "
+			     + " from Account_Holder"
+			     + " where EXISTS( select * from Passenger where Passenger.accountID= Account_Holder.accountID )";
+			hasResults=statement.executeQuery(code);
+			hasResults.first();   
+			int youngest = hasResults.getInt("MIN(age)");
+			System.out.println("The Youngest Passenger with Account is "+youngest);
+			System.out.println("The Eldest Passenger with Account is "+ oldest);
+			System.out.println("Average Age of Passenger with Account Holders is " + averageAge);
+		}catch(Exception e){
+            e.printStackTrace();				
+		}
+	}
+    public static void showMinors(){
+    	Statement statement=null;
+    	ResultSet hasResults= null;
+    	try{
+			statement= connection.createStatement();
+			String code = " USE BTRS";
+			statement.execute(code);
+			code = " select B.accountID, B.firstName,B.lastName, passengerID "
+				 + " from (select * from Account_Holder where age<18)B LEFT JOIN "
+				 + " Passenger on B.accountID = Passenger.accountID"
+				 + " order by B.accountID ";
+			hasResults=statement.executeQuery(code);
+			System.out.println("Status of Passenger under age 18");
+			while(hasResults.next()){
+				int accountID= hasResults.getInt("accountID");
+				String firstName= hasResults.getString("firstName");
+				String lastName= hasResults.getString("lastName");
+				int passengerID = hasResults.getInt("passengerID");
+				System.out.println(accountID + "  " +firstName + "  " +lastName + "  "+passengerID );				
+			}
+    	}catch(Exception e){
+    	    e.printStackTrace();	
+    		
+    	}
+
+    }
+    public static void going_to_LA(){
+    	Statement statement=null;
+    	ResultSet hasResults= null;
+    	
+    	try{
+			statement= connection.createStatement();
+			String code = " USE BTRS";
+			statement.execute(code);
+			code =" select accountID, firstName, lastName"
+				+ " from Account_Holder "
+				+ " where exists( select * from Passenger"
+				+ "    where Account_Holder.accountID = Passenger.accountID and endStID = 1010)"
+				+ " order by accountID";
+			hasResults = statement.executeQuery(code);
+			System.out.println("-----Persons going to Los Angelos-----");
+			while(hasResults.next()){
+				int accountID= hasResults.getInt("accountID");
+				String firstName= hasResults.getString("firstName");
+				String lastName= hasResults.getString("lastName");
+				System.out.println(accountID + "  " +firstName + "  " +lastName  );				
+			}		
+			code = " select 'Miscellaneous' as name "
+				  +" from Passenger "
+				  +" where accountID=0 AND endStID=1010 ";
+			hasResults = statement.executeQuery(code);
+			while(hasResults.next()){
+				String more = hasResults.getString("name");
+				System.out.println(more);
+			}		
+
+    	}catch(Exception e){
+    		e.printStackTrace();
+    		
+    	}	
+    }
+    
+	// Functional requirement 1
     public static boolean login(int accountID,String password, Boolean admin){
         Statement statement = null;
         ResultSet hasResults = null;
