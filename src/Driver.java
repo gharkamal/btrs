@@ -225,19 +225,7 @@ public class Driver{
 	                   }
 	                  
 	      			  break;
-//                    case 4: 
-//                        int accountID4= Integer.parseInt(sc.next());
-//                        int startstdID4 =Integer.parseInt(sc.next());
-//                        int endstID4=Integer.parseInt(sc.next());
-//                        int seatID4 = Integer.parseInt(sc.next());
-//                        String dateTime4= sc.next();
-//                        boolean success4 = updateTrip(accountID4,startstdID4,endstID4,seatID4,dateTime4);
-//                        if(success4)
-//                            System.out.println("-----Update Reserve Successful!-----");
-//                        else 
-//                            System.out.println("-----Update Reserve Failed!-----");
-//                        break;
-	      			  
+
                     case 4: //admin 
                     	   System.out.println("Enter Admin Login: <AccountID> <password>");
                     	   int accountID= Integer.parseInt(sc.next()) ;
@@ -257,12 +245,12 @@ public class Driver{
                                       opcode = Integer.parseInt(sc.next());
                                       switch(opcode){
                                       	case 1:
-                                      		System.out.println("<accountID>");
+                                      		System.out.println("Enter: <accountID>");
                                       		int accountID11 = Integer.parseInt(sc.next());
                                       		banCustomer(accountID11);
                                       		break;
                                       	case 2:
-                                      		System.out.println("<accountID>");
+                                      		System.out.println("Enter: <accountID>");
                                       		int accountID12 = Integer.parseInt(sc.next());
                                       		removeBan(accountID12);
                                       		break;
@@ -302,36 +290,7 @@ public class Driver{
                     			System.out.println("You are not an account Holder. Please Register");
                     		}
                         break;
-//                    case 7:
-//                        int accountID7=Integer.parseInt(sc.next());
-//                        int newseat7 = Integer.parseInt(sc.next());
-//                        boolean success7 = changeSeat(accountID7,newseat7);
-//                        if(success7)
-//                            System.out.println("-----Update Seat Successful!-----");
-//                        else 
-//                            System.out.println("-----Update Seat Failed!-----");
-//                        break;
-                    case 8:
-                        break;
-                    case 9:
-                        int accountID9=Integer.parseInt(sc.next());
-                        String email9 = sc.next();
-                        int creditcard9 = Integer.parseInt(sc.next());
-                        String password9 = sc.next();
-                        boolean success9 = updateAccount(accountID9,email9,creditcard9,password9);
-                        if(success9)
-                            System.out.println("-----Update Account Successful!-----");
-                        else 
-                            System.out.println("-----Update Account Failed!-----");
-                        break;
-                    case 11:
-                        int accountID11= Integer.parseInt( sc.next());
-                        boolean success11 = banCustomer(accountID11);
-                        if(success11)
-                            System.out.println("-----Ban Successful!-----");
-                        else 
-                            System.out.println("-----Ban Failed!-----");
-                        break;
+
                     case 12:
                         String deptTime12 = sc.next();
                         boolean isfull12 = sc.nextBoolean();
@@ -350,14 +309,6 @@ public class Driver{
                             System.out.println("-----Add Station Successful!-----");
                         else 
                             System.out.println("-----Add Station Failed!-----");
-                        break;
-                    case 14:
-                        int accountID14 = Integer.parseInt(sc.next());
-                        boolean success14 = removeBan(accountID14);
-                        if(success14)
-                            System.out.println("-----Remove Ban Successful!-----");
-                        else 
-                            System.out.println("-----Remove Ban Failed!-----");
                         break;
                      
                     case 16:
