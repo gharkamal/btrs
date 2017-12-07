@@ -21,14 +21,13 @@ ALTER TABLE Account_holder AUTO_INCREMENT=1000;
 
 DROP TABLE IF EXISTS Passenger;
 CREATE TABLE Passenger(
-  passengerID INT AUTO_INCREMENT,
-  accountID INT REFERENCES Account_Holder(accountID),
-  # startStID INT,
-  endStID INT REFERENCES Station(stationID),
-  # seatID INT,
-  # dateTime date,
-  wifi boolean,
-  PRIMARY KEY(passengerID)
+ passengerID INT AUTO_INCREMENT,
+ accountID INT,
+ endStID INT,
+ wifi boolean,
+ FOREIGN KEY accountID references Account_Holder(accountID),
+ FOREIGN KEY endStID references Station(stationID),
+ PRIMARY KEY(passengerID)
 );
 ALTER TABLE Passenger AUTO_INCREMENT=500;
 

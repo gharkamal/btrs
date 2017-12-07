@@ -404,40 +404,40 @@ public class Driver{
 
     }
     public static void going_to_LA(){
-    	Statement statement=null;
-    	ResultSet hasResults= null;
-    	
-    	try{
-			statement= connection.createStatement();
-			String code = " USE BTRS";
-			statement.execute(code);
-			code =" select accountID, firstName, lastName"
-				+ " from Account_Holder "
-				+ " where exists( select * from Passenger"
-				+ "    where Account_Holder.accountID = Passenger.accountID and endStID = 1010)"
-				+ " order by accountID";
-			hasResults = statement.executeQuery(code);
-			System.out.println("-----Persons going to Los Angelos-----");
-			while(hasResults.next()){
-				int accountID= hasResults.getInt("accountID");
-				String firstName= hasResults.getString("firstName");
-				String lastName= hasResults.getString("lastName");
-				System.out.println(accountID + "  " +firstName + "  " +lastName  );				
-			}		
-			code = " select 'Miscellaneous' as name "
-				  +" from Passenger "
-				  +" where accountID=0 AND endStID=1010 ";
-			hasResults = statement.executeQuery(code);
-			while(hasResults.next()){
-				String more = hasResults.getString("name");
-				System.out.println(more);
-			}		
+        Statement statement=null;
+        ResultSet hasResults= null;
+        
+       try{
+            statement= connection.createStatement();
+            String code = " USE BTRS";
+            statement.execute(code);
+            code =" select accountID, firstName, lastName"
+                + " from Account_Holder "
+                + " where exists( select * from Passenger"
+                + "    where Account_Holder.accountID = Passenger.accountID and "
+                + "endStID = ( select stationID from Station where name='Los Angeles Union' ))"
+                + " order by accountID";
+            hasResults = statement.executeQuery(code);
+            System.out.println("-----Persons going to Los Angelos-----");
+            while(hasResults.next()){
+                int accountID= hasResults.getInt("accountID");
+                String firstName= hasResults.getString("firstName");
+                String lastName= hasResults.getString("lastName");
+                System.out.println(accountID + "  " +firstName + "  " +lastName  );                
+            }        
+            code = " select 'Miscellaneous' as name "
+                  +" from Passenger "
+                  +" where accountID=0 AND endStID= ( select stationID from Station where name='Los Angeles Union') ";
+            hasResults = statement.executeQuery(code);
+            while(hasResults.next()){
+                String more = hasResults.getString("name");
+                System.out.println(more);
+            }        
 
-    	}catch(Exception e){
-    		e.printStackTrace();
-    		
-    	}	
-    }
+       }catch(Exception e){
+            e.printStackTrace();    
+       }    
+   }
     
 	// Functional requirement 1
     public static boolean login(int accountID,String password, Boolean admin){
