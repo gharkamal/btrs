@@ -172,23 +172,25 @@ public class Driver{
                             System.out.println("-----Login Failed!-----");
                         	   break;
                     case 2: //Register for Account
-                        System.out.println("Enter: <First Name> <Last Name> <email> <password> <Credit Card #>");
+                        System.out.println("Enter: <First Name> <Last Name> <age> <email> <password> <Credit Card #>");
                         String firstName=sc.next();
                         String lastName = sc.next();
+                        int age = sc.nextInt();
                         String email = sc.next();
                         String password =sc.next();
                         String creditCard = sc.next();
                         System.out.println(creditCard);
-                        boolean success2 = signUp(firstName,lastName, email,password,creditCard);
+                        boolean success2 = signUp(firstName,lastName, email,password,creditCard, age);
                         if(success2)
                             System.out.println("-----Sign Up Successful!-----");
                         else 
                             System.out.println("-----Sign Up Failed!-----");
                         break;
                     case 3://3  Reserve without Account
-                    	   System.out.println("Enter: <First Name> <Last Name> <Credit Card #>");
+                    	   System.out.println("Enter: <First Name> <Last Name> <age> <Credit Card #>");
                     	   String firstNameWO = sc.next();
                     	   String lastNameWO = sc.next();
+                    	   int ageWO = sc.nextInt();
                     	   long creditCardWO = sc.nextLong();
                     	   
                     	   showPossibleTripTimes(); //show user all the possible trip times                
@@ -471,12 +473,12 @@ public class Driver{
         return false;
     }
     // Functional requirement 2
-    public static Boolean signUp(String firstName,String lastName, String email,String password,String creditCard ){
+    public static Boolean signUp(String firstName,String lastName, String email,String password,String creditCard, int age ){
         PreparedStatement preparedstatement=null;
         PreparedStatement getID=null;
         try{
-            String code= "INSERT INTO Account_Holder(firstName,lastName, email,password,creditCard) "
-                    +    "values(?,?,?,?,?);  ";
+            String code= "INSERT INTO Account_Holder(firstName,lastName, email,password,creditCard, age) "
+                    +    "values(?,?,?,?,?, ?);  ";
             preparedstatement=connection.prepareStatement(code);
             
             preparedstatement.setString(1, firstName);
@@ -484,6 +486,7 @@ public class Driver{
             preparedstatement.setString(3, email);
             preparedstatement.setString(4, password);
             preparedstatement.setString(5, creditCard);
+            preparedstatement.setInt(6, age);
             int hasChanged = preparedstatement.executeUpdate();
             if(hasChanged == 1) {
             		String returnAccountID = "Select accountID from Account_Holder where "
