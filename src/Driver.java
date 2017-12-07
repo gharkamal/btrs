@@ -243,6 +243,8 @@ public class Driver{
                         	   	  System.out.println("3 Average Ages");
                         	   	  System.out.println("4 passengers under 18");
                         	   	  System.out.println("5 All passengers going to LA");
+                        	   	  System.out.println("6 Add new station");
+                        	   	  System.out.println("7 Add new Train");
                         	      try{
                                       opcode = Integer.parseInt(sc.next());
                                       switch(opcode){
@@ -265,6 +267,25 @@ public class Driver{
                                       	case 5:
                                       		going_to_LA();
                                       		break;
+                                      	case 6:
+                                      		System.out.println("Enter: <Station Name> <orderNumber>");
+                                      		String name13 = sc.next();
+                                              int order13 = sc.nextInt();
+                                              boolean success13 = addStation(name13,order13);
+                                              if(success13)
+                                                 System.out.println("-----Station Successfully added!-----");
+                                              else 
+                                                 System.out.println("-----Add Station Failed!-----");
+                                              break;
+                                      	case 7:
+                                      		System.out.println("Enter: < Departure Time>");
+                                      		String deptTime12 = sc.next();
+                                      		boolean success12 = addTrain(deptTime12,false);
+                                      		if(success12)
+                                      			System.out.println("-----Add Train Successful!-----");
+                                      		else 
+                                            	System.out.println("-----Add Train Failed!-----");
+                                      		break;  
 
                                       }
                         	      } catch(Exception e){
@@ -291,35 +312,6 @@ public class Driver{
                     		else {
                     			System.out.println("You are not an account Holder. Please Register");
                     		}
-                        break;
-
-                    case 12:
-                        String deptTime12 = sc.next();
-                        boolean isfull12 = sc.nextBoolean();
-                        boolean success12 = addTrain(deptTime12,isfull12);
-                        if(success12)
-                            System.out.println("-----Add Train Successful!-----");
-                        else 
-                            System.out.println("-----Add Train Failed!-----");
-                        break;
-                    case 13:
-                
-                        String name13 = sc.next();
-                        int order13 = Integer.parseInt(sc.next());
-                        boolean success13 = addStation(name13,order13);
-                        if(success13)
-                            System.out.println("-----Add Station Successful!-----");
-                        else 
-                            System.out.println("-----Add Station Failed!-----");
-                        break;
-                     
-                    case 16:
-                        //int accountID16 = Integer.parseInt(sc.next());
-                        ResultSet success16 =currentPassengers();
-                        if(success16.first())
-                            System.out.println(success16);
-                        else 
-                            System.out.println("-----Update WIFI Failed!-----");
                         break;
                     case 0:
                         System.out.println("-----Bye!-----");
