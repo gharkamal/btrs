@@ -1,7 +1,12 @@
 import java.io.FileInputStream;
+import java.util.Calendar;
+import java.util.GregorianCalendar;
 import java.util.Properties;
 import com.mysql.jdbc.jdbc2.optional.MysqlDataSource;
 import java.sql.*;
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
+import java.time.LocalDateTime;
 import java.util.Scanner;
 
 public class Driver{
@@ -246,6 +251,7 @@ public class Driver{
                         	   	  System.out.println("5 All passengers going to LA");
                         	   	  System.out.println("6 Add new station");
                         	   	  System.out.println("7 Add new Train");
+                        	   	  System.out.println("8 Archive Passengers from today");
                         	      try{
                                       opcode = Integer.parseInt(sc.next());
                                       switch(opcode){
@@ -286,7 +292,10 @@ public class Driver{
                                       			System.out.println("-----Add Train Successful!-----");
                                       		else 
                                             	System.out.println("-----Add Train Failed!-----");
-                                      		break;  
+                                      		break; 
+                                      	case 8:                     
+                                      		callArchiveProcedure();
+                                      		break;
 
                                       }
                         	      } catch(Exception e){
@@ -300,7 +309,7 @@ public class Driver{
                            }
                         break;
                     case 5: //recover account ID number 
-                    		System.out.println("Enter <first Namae> <last Name> <Email> <password> : ");
+                    		System.out.println("Enter <first Name> <last Name> <Email> <password> : ");
                     		String firstN = sc.next();
                     		String lastN = sc.next();
                     		String email2 = sc.next();
@@ -988,6 +997,31 @@ public class Driver{
         }
         //return hasResults; 
 		return null;
+    }
+
+
+    //call procedure 
+    public static void callArchiveProcedure(){
+    		SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+    		Calendar cal = Calendar.getInstance();
+    		cal.add(Calendar.DATE, 1);
+    		String formatted = sdf.format(cal.getTime());
+    		System.out.println(formatted);
+    		//System.out.println(dateFormat.format(now));
+    		PreparedStatement preparedstatement= null;
+    		try {
+    				String code = "{CALL archivePassengers('" + formatted.toString() +"')}";
+    				preparedstatement = connection.prepareStatement(code);
+    				//preparedstatement.setString(1,formatted.toString());
+				int hasResult = preparedstatement.executeUpdate();
+		
+					System.out.println("Archieving Successful"); 
+				
+			} catch (SQLException e) {
+				// TODO Auto-generated catch block
+				System.out.println("Archieving unsuccessful"); 
+				e.printStackTrace();
+			}
     }
 
     

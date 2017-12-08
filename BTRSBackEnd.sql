@@ -32,11 +32,22 @@ CREATE TABLE Passenger(
  accountID INT,
  endStID INT,
  wifi boolean,
+ dateTime TIMESTAMP,
  FOREIGN KEY (accountID) references Account_Holder(accountID),
  FOREIGN KEY (endStID) references Station(stationID),
  PRIMARY KEY(passengerID)
 );
 ALTER TABLE Passenger AUTO_INCREMENT=500;
+
+DROP TABLE IF EXISTS archievePassenger;
+CREATE TABLE archievePassenger(
+ passengerID INT,
+ accountID INT,
+ endStID INT,
+ wifi boolean,
+ dateTime TIMESTAMP
+);
+
 
 DROP TABLE IF EXISTS Train;
 CREATE TABLE Train(
@@ -72,9 +83,9 @@ DROP PROCEDURE IF EXISTS archivePassengers;
 DELIMITER //
 CREATE PROCEDURE archivePassengers(IN last date)
   BEGIN
-    INSERT INTO archive(passengerID, accountID, startStID ,endStID ,seatID, dateTime, wifi)
-      Select passengerID, accountID, startStID ,endStID ,seatID, dateTime, wifi from Passenger where dateTime <= last;
-    Delete from Passenger where updatedAt <= last;
+    INSERT INTO archievePassenger(passengerID, accountID ,endStID, wifi, dateTime)
+      Select passengerID, accountID ,endStID, wifi, dateTime from Passenger where dateTime <= last;
+    Delete from Passenger where dateTime <= last;
   END//
 DELIMITER ;
 
