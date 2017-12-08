@@ -58,6 +58,7 @@ public class Driver{
                         	   System.out.println("3 Change trip destination");
                         	   System.out.println("4 Change Password");
                         	   System.out.println("5 Purchase Wifi");
+                        	   System.out.println("6 Cancel Reservation");
                         	   try {
                         		   opcode = Integer.parseInt(sc.next());
                         		   switch(opcode)
@@ -156,9 +157,9 @@ public class Driver{
                         			   else 
                         				    System.out.println("-----Update WIFI Failed!-----");
                         			   break;
-                        			   
-
-                        					   
+                        		   case 6:
+                        			   deleteReservation(accountID1);
+                        			   break;		   
                         		   }
                         		   
                         	   } catch(Exception e){
@@ -808,7 +809,7 @@ public class Driver{
     		return 0;
     }
 
-    //Requirement 8: Delete reservation:   Delete   a   trip.
+    //Requirement 8: Delete reservation:   Delete   a   trip.  Cancellation
       public static boolean deleteReservation(int accountID){
         PreparedStatement preparedstatement=null;
         try{
@@ -816,12 +817,15 @@ public class Driver{
             preparedstatement = connection.prepareStatement(code);
             preparedstatement.setInt(1,accountID);
             int hasChanged = preparedstatement.executeUpdate();
-            if(hasChanged==1)
-                return true;
+            if(hasChanged==1) {
+            		System.out.print("Reservation successfully cancelled");
+                 return true;
+            }
         }catch(Exception e){
             e.printStackTrace();
             return false;
         }
+        System.out.println("Unsuccessful Cancellation");
         return false;
     }
 
