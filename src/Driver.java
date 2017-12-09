@@ -155,12 +155,12 @@ public class Driver{
                                            break;   
                         			   }
                         		   case 5:
-                        			   boolean wifi=sc.nextBoolean();
-                        			   boolean success15 =wifiUpdate(accountID1,wifi);
+                        			  // boolean wifi=sc.nextBoolean();
+                        			   boolean success15 =wifiUpdate(accountID1,true);
                         			   if(success15)
                                          System.out.println("-----Successful Purchased Wifi!-----");
                         			   else 
-                        				    System.out.println("-----Update WIFI Failed!-----");
+                        				    System.out.println("-----Update WIFI Failed! Make a reservation first!-----");
                         			   break;
                         		   case 6:
                         			   deleteReservation(accountID1);
@@ -667,11 +667,9 @@ public class Driver{
             		seater.setString(3, seatID);
             		seater.setInt(4, trainID);
                  int hasChanged1 = seater.executeUpdate();
-                 if(hasChanged1 ==1) {
-                	
+                 if(hasChanged1 == 1) {
                     		System.out.println("Your Passenger ID is: " + passID);
                     		return true;
-                    	
                  }
             }
         }catch(Exception e){
@@ -751,7 +749,7 @@ public class Driver{
          try{
              String code = "UPDATE Car "
                           + "SET passengerID = NULL "
-                          +"WHERE passengerID = (select passengerID from passenger where accountID = ?) and carID = ? and trainID = ? ";
+                          +"WHERE passengerID = (select passengerID from passenger where accountID = ?) and carNumber = ? and trainID = ? ";
              preparedstatement=connection.prepareStatement(code);
              preparedstatement.setInt(1, accountID);
              preparedstatement.setInt(2, carID);
@@ -771,10 +769,8 @@ public class Driver{
         try{
         		int passengerID = 0;
         		ResultSet id = getPassengerID(accountID, endStID, null, carID, trainID);
-        		while(id.next()) {
-        			passengerID = id.getInt("passengerID");
-        		}
-        		System.out.println("MY PASSENGER ID :" + passengerID );
+        		passengerID = id.getInt("passengerID");
+        		System.out.println("MY PASSENGER ID : " + passengerID );
             String code = "UPDATE car "
                          +"SET passengerID = ?  "
                          +"WHERE seatID = ? and trainID = ? and carNumber = ?";
