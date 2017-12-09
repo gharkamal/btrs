@@ -220,7 +220,7 @@ public class Driver{
 	      	    		   else {
 	      	    			   break;
 	      	    		   }
-	                  boolean success3 = reserveTrip(0,stopStation,seatSelected, false, carID, trainIDSelected);
+	                  boolean success3 = reserveTrip(0 ,stopStation,seatSelected, false, carID, trainIDSelected);
 	                  if(success3) {
 	                       System.out.println("-----Reservation Successful!-----");
 //	                  	  ResultSet id = getPassengerID(0, stopStation, seatSelected, trainIDSelected, carID );
@@ -637,42 +637,71 @@ public class Driver{
     		return false;
     }
 
+    //Find available seat
+    public static boolean isBanned(int accountID)
+    {
+    		PreparedStatement preparedstatement=null;
+    		try {
+    			String code = "select accountID from banned where accountID = ?"; //check if seat is null
+    			preparedstatement=connection.prepareStatement(code);
+    		    preparedstatement.setInt(1, accountID);
+    			ResultSet result = preparedstatement.executeQuery();
+    	
+	    		   
+    			  if(result.next()) {
+	    				System.out.println("You are banned");
+	    				return true;
+	    			}
+    			
+	    		 
+    		}catch(Exception e){
+                e.printStackTrace();
+                //return null;
+            }
+    		return false;
+    }
+
     
     //Functional requirement 3 : Reserve train destination: Sign up for a trip.
     public static boolean reserveTrip(int accountID, int endStID, String seatID, boolean wifi, int carID, int trainID)
     {
         PreparedStatement preparedstatement=null;
         try{
-        	    String code = "INSERT INTO Passenger(accountID,endStID,wifi) values(?,?,?)";
-            preparedstatement=connection.prepareStatement(code);
-            preparedstatement.setInt(1, accountID);
-            preparedstatement.setInt(2, endStID);
-            preparedstatement.setBoolean(3, wifi);
-            int hasChanged = preparedstatement.executeUpdate();
-            PreparedStatement preparedstatement1=null;
-            String maxCode = "select Max(passengerID) from Passenger";
-            preparedstatement1=connection.prepareStatement(maxCode);
-            ResultSet maxPass = preparedstatement1.executeQuery();
-            int passID = 0;
-            if (maxPass.next()) {
-   				passID = maxPass.getInt(1); 
-            }
-   			
-            if(hasChanged ==1) {
-            	PreparedStatement seater =null;
-            		String seatSet = "UPDATE Car SET passengerID = ? where carNumber = ? and seatID = ? and trainID = ?";
-            			
-            		seater=connection.prepareStatement(seatSet);
-            		seater.setInt(1, passID);
-            		seater.setInt(2, carID);
-            		seater.setString(3, seatID);
-            		seater.setInt(4, trainID);
-                 int hasChanged1 = seater.executeUpdate();
-                 if(hasChanged1 == 1) {
-                    		System.out.println("Your Passenger ID is: " + passID);
-                    		return true;
-                 }
-            }
+        		if(isBanned(accountID) == false) {
+        			//System.out.println("before insert");
+	        	    String code = "INSERT INTO Passenger(accountID,endStID,wifi) values(?,?,?)";
+	            preparedstatement=connection.prepareStatement(code);
+	            preparedstatement.setNull(1, accountID);
+	            preparedstatement.setInt(2, endStID);
+	            preparedstatement.setBoolean(3, wifi);
+	            int hasChanged = preparedstatement.executeUpdate();
+	            PreparedStatement preparedstatement1=null;
+	            //System.out.println("before max");
+	            String maxCode = "select Max(passengerID) from Passenger";
+	            preparedstatement1=connection.prepareStatement(maxCode);
+	            ResultSet maxPass = preparedstatement1.executeQuery();
+	            int passID = 0;
+	            if (maxPass.next()) {
+	   				passID = maxPass.getInt(1); 
+	            }
+	   			
+	            if(hasChanged ==1) {
+	            	PreparedStatement seater =null;
+	            //	System.out.println("before update");
+	            		String seatSet = "UPDATE Car SET passengerID = ? where carNumber = ? and seatID = ? and trainID = ?";
+	            			
+	            		seater=connection.prepareStatement(seatSet);
+	            		seater.setInt(1, passID);
+	            		seater.setInt(2, carID);
+	            		seater.setString(3, seatID);
+	            		seater.setInt(4, trainID);
+	                 int hasChanged1 = seater.executeUpdate();
+	                 if(hasChanged1 == 1) {
+	                    		System.out.println("Your Passenger ID is: " + passID);
+	                    		return true;
+	                 }
+	            }
+        		}
         }catch(Exception e){
             e.printStackTrace();
             return false;
