@@ -242,6 +242,7 @@ public class Driver{
                            //System.out.print(password1);
                            boolean success = login(accountID,passw, true);
                            if(success)
+             
                            {
                                System.out.println("\n -----Login Successful!-----");
                                System.out.println("1 Ban Account Holder");
@@ -823,7 +824,7 @@ public class Driver{
             preparedstatement.setInt(1,accountID);
             int hasChanged = preparedstatement.executeUpdate();
             if(hasChanged==1) {
-            		System.out.print("Reservation successfully cancelled");
+            		System.out.println("Reservation successfully cancelled");
                  return true;
             }
         }catch(Exception e){
@@ -983,7 +984,7 @@ public class Driver{
             
             ResultSet hasResults =statement.executeQuery(code);
             
-            System.out.println("this is here " + hasResults.first());
+            //System.out.println("this is here " + hasResults.first());
             if(hasResults.first() )
                 return hasResults;
             
